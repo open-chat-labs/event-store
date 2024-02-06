@@ -9,4 +9,6 @@ edition = "2021"
 candid.workspace = true
 event_sink_canister.path = "../api"
 ic-cdk.workspace = true
-serde = { version = "1.0.196", features = ["derive"] }
+ic-stable-structures.workspace = true
+rmp-serde.workspace = true
+serde.workspace = true

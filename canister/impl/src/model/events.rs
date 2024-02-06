@@ -3,7 +3,7 @@ use event_sink_canister::{Event, IndexedEvent};
 use serde::Serialize;
 use std::collections::VecDeque;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Default)]
 pub struct Events {
     events: VecDeque<IndexedEvent>,
     latest_event_index: Option<u64>,
