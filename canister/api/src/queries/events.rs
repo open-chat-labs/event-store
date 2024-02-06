@@ -11,6 +11,6 @@ pub struct EventsArgs {
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct EventsResponse {
     pub events: Vec<IndexedEvent>,
-    pub latest_event_index: u64,
-    pub events_stored: u64,
+    pub latest_event_index: Option<u64>,
+    pub earliest_event_index_stored: Option<u64>,
 }

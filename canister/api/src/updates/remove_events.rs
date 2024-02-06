@@ -8,6 +8,6 @@ pub struct RemoveEventsArgs {
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct RemoveEventsResponse {
-    pub latest_event_index: u64,
-    pub events_stored: u64,
+    pub latest_event_index: Option<u64>,
+    pub earliest_event_index_stored: Option<u64>,
 }
