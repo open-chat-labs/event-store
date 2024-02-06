@@ -1,24 +1,9 @@
 {
   "canisters": {
-    "event_sink_backend": {
-      "candid": "src/event_sink_backend/event_sink_backend.did",
-      "package": "event_sink_backend",
+    "event_sink": {
+      "candid": "canister/api/can.did",
+      "package": "event_sink_canister_impl",
       "type": "rust"
-    },
-    "event_sink_frontend": {
-      "dependencies": [
-        "event_sink_backend"
-      ],
-      "source": [
-        "src/event_sink_frontend/assets"
-      ],
-      "type": "assets"
-    }
-  },
-  "defaults": {
-    "build": {
-      "args": "",
-      "packtool": ""
     }
   },
   "output_env_file": ".env",
