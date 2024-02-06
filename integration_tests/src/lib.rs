@@ -1,5 +1,5 @@
 #![cfg(test)]
-use crate::rng::{random_bytes, random_principal, random_string};
+use crate::rng::{random, random_bytes, random_principal, random_string};
 use crate::setup::setup_new_env;
 use candid::Principal;
 use event_sink_canister::{Event, EventsArgs, InitArgs, PushEventsArgs, RemoveEventsArgs};
@@ -40,6 +40,7 @@ fn read_push_remove_events_succeeds() {
         &PushEventsArgs {
             events: (0..10)
                 .map(|i| Event {
+                    idempotency_key: random(),
                     name: random_string(),
                     timestamp: i,
                     payload: ByteBuf::from(random_bytes()),

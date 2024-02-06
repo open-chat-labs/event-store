@@ -1,3 +1,4 @@
+use crate::env;
 use crate::model::events::Events;
 use candid::Principal;
 use serde::{Deserialize, Serialize};
@@ -56,17 +57,17 @@ impl State {
     }
 
     pub fn can_caller_push_events(&self) -> bool {
-        let caller = ic_cdk::caller();
+        let caller = env::caller();
         self.push_events_whitelist.contains(&caller)
     }
 
     pub fn can_caller_read_events(&self) -> bool {
-        let caller = ic_cdk::caller();
+        let caller = env::caller();
         self.read_events_whitelist.contains(&caller)
     }
 
     pub fn can_caller_remove_events(&self) -> bool {
-        let caller = ic_cdk::caller();
+        let caller = env::caller();
         self.remove_events_whitelist.contains(&caller)
     }
 }
