@@ -1,0 +1,4 @@
+[workspace]
+members = [
+    "src/event_sink_backend",
+]
