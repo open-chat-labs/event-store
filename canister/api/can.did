@@ -35,7 +35,13 @@ type EventsResponse = record {
     earliest_event_index_stored : opt nat64;
 };
 
-service : {
+type InitArgs = record {
+    push_events_whitelist : vec principal;
+    read_events_whitelist : vec principal;
+    remove_events_whitelist : vec principal;
+};
+
+service : (InitArgs) -> {
     push_events : (PushEventsArgs) -> ();
     remove_events : (RemoveEventsArgs) -> (RemoveEventsResponse);
     events : (EventsArgs) -> (EventsResponse) query;
