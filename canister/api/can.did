@@ -1,9 +1,11 @@
+type Event = record {
+    name : text;
+    timestamp : nat64;
+    payload : blob;
+};
+
 type PushEventsArgs = record {
-    events : vec record {
-        name : text;
-        timestamp : nat64;
-        payload : blob;
-    };
+    events : vec Event;
 };
 
 type RemoveEventsArgs = record {
@@ -20,13 +22,15 @@ type EventsArgs = record {
     length : nat64;
 };
 
+type IndexedEvent = record {
+    index : nat64;
+    name : text;
+    timestamp : nat64;
+    payload : blob;
+};
+
 type EventsResponse = record {
-    events : vec record {
-        index : nat64;
-        name : text;
-        timestamp : nat64;
-        payload : blob;
-    };
+    events : vec IndexedEvent;
     latest_event_index : nat64;
     events_stored : nat64;
 };

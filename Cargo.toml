@@ -4,3 +4,9 @@ members = [
     "canister/impl",
 ]
 resolver = "2"
+
+[workspace.dependencies]
+candid = "0.10.3"
+ic-cdk = "0.12.1"
+serde = "1.0.196"
+serde_bytes = "0.11.14"
