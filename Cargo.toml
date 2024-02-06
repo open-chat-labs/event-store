@@ -2,13 +2,19 @@
 members = [
     "canister/api",
     "canister/impl",
+    "integration_tests",
 ]
 resolver = "2"
 
 [workspace.dependencies]
 candid = "0.10.3"
-ic-cdk = "0.12.1"
+ic-cdk = "=0.12.0"
 ic-stable-structures = "0.6.2"
+pocket-ic = "2.0.1"
+rand = "0.8.5"
 rmp-serde = "1.1.2"
 serde = "1.0.196"
 serde_bytes = "0.11.14"
+
+[patch.crates-io]
+pocket-ic = { git = "https://github.com/dfinity/ic", rev = "044cfd5147fc97d7e5a214966941b6580c325d72" }

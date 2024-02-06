@@ -67,6 +67,6 @@ impl State {
 
     pub fn can_caller_remove_events(&self) -> bool {
         let caller = ic_cdk::caller();
-        self.read_events_whitelist.contains(&caller)
+        self.remove_events_whitelist.contains(&caller)
     }
 }

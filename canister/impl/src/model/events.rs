@@ -13,7 +13,7 @@ impl Events {
     pub fn get(&self, start: u64, length: u64) -> Vec<IndexedEvent> {
         if let Some(start_index) = self
             .earliest_event_index_stored()
-            .and_then(|i| start.checked_rem(i))
+            .and_then(|i| start.checked_sub(i))
             .map(|i| i as usize)
             .filter(|i| *i < self.events.len())
         {
