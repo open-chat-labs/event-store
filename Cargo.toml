@@ -1,4 +1,6 @@
 [workspace]
 members = [
-    "src/event_sink_backend",
+    "canister/api",
+    "canister/impl",
 ]
+resolver = "2"

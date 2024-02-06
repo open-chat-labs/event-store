@@ -1,0 +1,38 @@
+type PushEventsArgs = record {
+    events : vec record {
+        name : text;
+        timestamp : nat64;
+        payload : blob;
+    };
+};
+
+type RemoveEventsArgs = record {
+    up_to_inclusive : nat64;
+};
+
+type RemoveEventsResponse = record {
+    latest_event_index : nat64;
+    events_stored : nat64;
+};
+
+type EventsArgs = record {
+    start : nat64;
+    length : nat64;
+};
+
+type EventsResponse = record {
+    events : vec record {
+        index : nat64;
+        name : text;
+        timestamp : nat64;
+        payload : blob;
+    };
+    latest_event_index : nat64;
+    events_stored : nat64;
+};
+
+service : {
+    push_events : (PushEventsArgs) -> ();
+    remove_events : (RemoveEventsArgs) -> (RemoveEventsResponse);
+    events : (EventsArgs) -> (EventsResponse) query;
+}
