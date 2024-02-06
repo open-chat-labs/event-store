@@ -1,6 +1,6 @@
 use crate::guards::caller_can_read_events;
 use crate::state;
-use event_sink_canister::events::{EventsArgs, EventsResponse};
+use event_sink_canister::{EventsArgs, EventsResponse};
 use ic_cdk::query;
 
 #[query(guard = "caller_can_read_events")]

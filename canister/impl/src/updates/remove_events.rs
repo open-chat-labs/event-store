@@ -1,6 +1,6 @@
 use crate::guards::caller_can_remove_events;
 use crate::state;
-use event_sink_canister::remove_events::{RemoveEventsArgs, RemoveEventsResponse};
+use event_sink_canister::{RemoveEventsArgs, RemoveEventsResponse};
 use ic_cdk::update;
 
 #[update(guard = "caller_can_remove_events")]

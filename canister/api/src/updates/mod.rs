@@ -1,2 +1,5 @@
-pub mod push_events;
-pub mod remove_events;
+mod push_events;
+mod remove_events;
+
+pub use push_events::*;
+pub use remove_events::*;

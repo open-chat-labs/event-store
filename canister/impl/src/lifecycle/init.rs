@@ -1,6 +1,6 @@
 use crate::state;
 use crate::state::State;
-use event_sink_canister::init::InitArgs;
+use event_sink_canister::InitArgs;
 use ic_cdk::init;
 
 #[init]
