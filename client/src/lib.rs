@@ -4,6 +4,7 @@ use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 
 const DEFAULT_FLUSH_DELAY: Duration = Duration::from_secs(300);
+const DEFAULT_MAX_BATCH_SIZE: u32 = 1000;
 
 pub struct Client<R> {
     inner: Arc<Mutex<ClientInner<R>>>,
@@ -12,6 +13,7 @@ pub struct Client<R> {
 struct ClientInner<R> {
     runtime: R,
     flush_delay: Duration,
+    max_batch_size: usize,
     next_flush_scheduled: Option<TimestampMillis>,
     events: Vec<IdempotentEvent>,
 }
@@ -38,6 +40,7 @@ impl<R> Client<R> {
 pub struct ClientBuilder<R> {
     runtime: R,
     flush_delay: Option<Duration>,
+    max_batch_size: Option<u32>,
     events: Vec<IdempotentEvent>,
 }
 
@@ -46,12 +49,18 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
         ClientBuilder {
             runtime,
             flush_delay: None,
+            max_batch_size: None,
             events: Vec::new(),
         }
     }
 
     pub fn with_flush_delay(mut self, duration: Duration) -> Self {
         self.flush_delay = Some(duration);
+        self
+    }
+
+    pub fn with_max_batch_size(mut self, max_batch_size: u32) -> Self {
+        self.max_batch_size = Some(max_batch_size);
         self
     }
 
@@ -62,8 +71,13 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
 
     pub fn build(self) -> Client<R> {
         let flush_delay = self.flush_delay.unwrap_or(DEFAULT_FLUSH_DELAY);
+        let max_batch_size = self.max_batch_size.unwrap_or(DEFAULT_MAX_BATCH_SIZE) as usize;
         let client = Client {
-            inner: Arc::new(Mutex::new(ClientInner::new(self.runtime, flush_delay))),
+            inner: Arc::new(Mutex::new(ClientInner::new(
+                self.runtime,
+                flush_delay,
+                max_batch_size,
+            ))),
         };
         if !self.events.is_empty() {
             client.requeue_events(self.events);
@@ -82,31 +96,19 @@ impl<R: Runtime + Send + 'static> Client<R> {
             timestamp: event.timestamp,
             payload: event.payload,
         });
-        self.schedule_flush_if_required(guard);
+        self.post_events_added(guard, true);
     }
 
-    fn requeue_events(&self, events: Vec<IdempotentEvent>) {
-        let mut guard = self.inner.lock().unwrap();
-        guard.events.extend(events);
-        self.schedule_flush_if_required(guard);
-    }
-
-    fn schedule_flush_if_required(&self, mut guard: MutexGuard<ClientInner<R>>) {
-        if guard.next_flush_scheduled.is_none() {
-            let clone = self.clone();
-            let now = guard.runtime.now();
-            let flush_delay = guard.flush_delay;
-            guard
-                .runtime
-                .schedule_flush(flush_delay, move || clone.flush_events());
-            guard.next_flush_scheduled = Some(now + flush_delay.as_millis() as u64);
-        }
-    }
-
-    fn flush_events(&self) {
+    pub fn flush_batch(&self) {
         let mut guard = self.inner.lock().unwrap();
         guard.next_flush_scheduled = None;
-        let events = mem::take(&mut guard.events);
+        let max_batch_size = guard.max_batch_size;
+
+        let events = if guard.events.len() < max_batch_size {
+            mem::take(&mut guard.events)
+        } else {
+            guard.events.drain(..max_batch_size).collect()
+        };
 
         if !events.is_empty() {
             let clone = self.clone();
@@ -114,6 +116,35 @@ impl<R: Runtime + Send + 'static> Client<R> {
                 .runtime
                 .flush(events.clone(), move || clone.requeue_events(events));
         }
+    }
+
+    fn requeue_events(&self, events: Vec<IdempotentEvent>) {
+        let mut guard = self.inner.lock().unwrap();
+        guard.events.extend(events);
+        self.post_events_added(guard, false);
+    }
+
+    fn post_events_added(&self, guard: MutexGuard<ClientInner<R>>, can_flush_immediately: bool) {
+        let max_batch_size_reached = guard.events.len() >= guard.max_batch_size;
+        if max_batch_size_reached {
+            if can_flush_immediately {
+                self.flush_batch();
+            } else {
+                self.schedule_flush(guard, Duration::ZERO)
+            }
+        } else if guard.next_flush_scheduled.is_none() {
+            let delay = guard.flush_delay;
+            self.schedule_flush(guard, delay)
+        }
+    }
+
+    fn schedule_flush(&self, mut guard: MutexGuard<ClientInner<R>>, delay: Duration) {
+        let clone = self.clone();
+        let now = guard.runtime.now();
+        guard
+            .runtime
+            .schedule_flush(delay, move || clone.flush_batch());
+        guard.next_flush_scheduled = Some(now + delay.as_millis() as u64);
     }
 }
 
@@ -126,10 +157,11 @@ impl<R> Clone for Client<R> {
 }
 
 impl<R> ClientInner<R> {
-    pub fn new(runtime: R, flush_delay: Duration) -> ClientInner<R> {
+    pub fn new(runtime: R, flush_delay: Duration, max_batch_size: usize) -> ClientInner<R> {
         ClientInner {
             runtime,
             flush_delay,
+            max_batch_size,
             next_flush_scheduled: None,
             events: Vec::new(),
         }
