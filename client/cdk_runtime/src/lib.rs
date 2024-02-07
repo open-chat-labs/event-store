@@ -1,6 +1,7 @@
 use candid::Principal;
 use event_sink_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
 use event_sink_client::Runtime;
+use ic_cdk_timers::TimerId;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::time::Duration;
@@ -8,6 +9,7 @@ use std::time::Duration;
 pub struct CdkRuntime {
     canister_id: Principal,
     rng: StdRng,
+    scheduled_flush_timer: Option<TimerId>,
 }
 
 impl CdkRuntime {
@@ -18,16 +20,25 @@ impl CdkRuntime {
         CdkRuntime {
             canister_id,
             rng: StdRng::from_seed(seed),
+            scheduled_flush_timer: None,
         }
+    }
+
+    fn clear_timer(&mut self) {
+        if let Some(timer_id) = self.scheduled_flush_timer.take() {
+            ic_cdk_timers::clear_timer(timer_id);
+        };
     }
 }
 
 impl Runtime for CdkRuntime {
-    fn schedule_callback<F: FnOnce() + 'static>(&self, delay: Duration, callback: F) {
-        ic_cdk_timers::set_timer(delay, callback);
+    fn schedule_flush<F: FnOnce() + 'static>(&mut self, delay: Duration, callback: F) {
+        self.clear_timer();
+        self.scheduled_flush_timer = Some(ic_cdk_timers::set_timer(delay, callback));
     }
 
-    fn flush<F: FnOnce() + 'static>(&self, events: Vec<IdempotentEvent>, trigger_retry: F) {
+    fn flush<F: FnOnce() + 'static>(&mut self, events: Vec<IdempotentEvent>, trigger_retry: F) {
+        self.clear_timer();
         ic_cdk::spawn(flush_async(self.canister_id, events, trigger_retry))
     }
 

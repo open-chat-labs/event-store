@@ -15,8 +15,8 @@ struct ClientInner<R> {
 }
 
 pub trait Runtime {
-    fn schedule_callback<F: FnOnce() + 'static>(&self, delay: Duration, callback: F);
-    fn flush<F: FnOnce() + 'static>(&self, events: Vec<IdempotentEvent>, trigger_retry: F);
+    fn schedule_flush<F: FnOnce() + 'static>(&mut self, delay: Duration, callback: F);
+    fn flush<F: FnOnce() + 'static>(&mut self, events: Vec<IdempotentEvent>, trigger_retry: F);
     fn rng(&mut self) -> u128;
     fn now(&self) -> TimestampMillis;
 }
@@ -66,10 +66,11 @@ impl<R: Runtime + 'static> Client<R> {
         if guard.next_flush_scheduled.is_none() {
             let clone = self.clone();
             let now = guard.runtime.now();
+            let flush_interval = guard.flush_interval;
             guard
                 .runtime
-                .schedule_callback(guard.flush_interval, move || clone.flush_events());
-            guard.next_flush_scheduled = Some(now + guard.flush_interval.as_millis() as u64);
+                .schedule_flush(flush_interval, move || clone.flush_events());
+            guard.next_flush_scheduled = Some(now + flush_interval.as_millis() as u64);
         }
     }
 
