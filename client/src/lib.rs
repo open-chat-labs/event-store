@@ -3,7 +3,6 @@ use std::mem;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 
-#[derive(Clone)]
 pub struct Client<R> {
     inner: Arc<Mutex<ClientInner<R>>>,
 }
@@ -15,7 +14,7 @@ struct ClientInner<R> {
     events: Vec<IdempotentEvent>,
 }
 
-pub trait Runtime: Clone {
+pub trait Runtime {
     fn schedule_callback<F: FnOnce() + 'static>(&self, delay: Duration, callback: F);
     fn flush<F: FnOnce() + 'static>(&self, events: Vec<IdempotentEvent>, trigger_retry: F);
     fn rng(&mut self) -> u128;
@@ -83,6 +82,14 @@ impl<R: Runtime + 'static> Client<R> {
             guard
                 .runtime
                 .flush(events.clone(), move || clone.requeue_events(events));
+        }
+    }
+}
+
+impl<R> Clone for Client<R> {
+    fn clone(&self) -> Self {
+        Client {
+            inner: self.inner.clone(),
         }
     }
 }

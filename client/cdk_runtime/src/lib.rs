@@ -5,7 +5,6 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::time::Duration;
 
-#[derive(Clone)]
 pub struct CdkRuntime {
     canister_id: Principal,
     rng: StdRng,
@@ -21,19 +20,6 @@ impl CdkRuntime {
             rng: StdRng::from_seed(seed),
         }
     }
-
-    async fn flush_async<F: FnOnce()>(self, events: Vec<IdempotentEvent>, trigger_retry: F) {
-        if ic_cdk::call::<_, ()>(
-            self.canister_id,
-            "push_events",
-            (PushEventsArgs { events },),
-        )
-        .await
-        .is_err()
-        {
-            trigger_retry();
-        }
-    }
 }
 
 impl Runtime for CdkRuntime {
@@ -42,8 +28,7 @@ impl Runtime for CdkRuntime {
     }
 
     fn flush<F: FnOnce() + 'static>(&self, events: Vec<IdempotentEvent>, trigger_retry: F) {
-        let clone = self.clone();
-        ic_cdk::spawn(clone.flush_async(events, trigger_retry))
+        ic_cdk::spawn(flush_async(self.canister_id, events, trigger_retry))
     }
 
     fn rng(&mut self) -> u128 {
@@ -52,5 +37,18 @@ impl Runtime for CdkRuntime {
 
     fn now(&self) -> TimestampMillis {
         ic_cdk::api::time() / 1_000_000
+    }
+}
+
+async fn flush_async<F: FnOnce()>(
+    canister_id: Principal,
+    events: Vec<IdempotentEvent>,
+    trigger_retry: F,
+) {
+    if ic_cdk::call::<_, ()>(canister_id, "push_events", (PushEventsArgs { events },))
+        .await
+        .is_err()
+    {
+        trigger_retry();
     }
 }
