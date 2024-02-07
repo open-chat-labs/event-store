@@ -44,6 +44,8 @@ impl Events {
             index,
             name: event.name,
             timestamp: event.timestamp,
+            user: event.user,
+            source: event.source,
             payload: event.payload,
         });
         self.latest_event_index = Some(index);
