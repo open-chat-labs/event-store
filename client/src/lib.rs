@@ -102,20 +102,25 @@ impl<R: Runtime + Send + 'static> Client<R> {
     pub fn flush_batch(&self) {
         let mut guard = self.inner.lock().unwrap();
         guard.next_flush_scheduled = None;
-        let max_batch_size = guard.max_batch_size;
 
-        let events = if guard.events.len() < max_batch_size {
-            mem::take(&mut guard.events)
-        } else {
-            guard.events.drain(..max_batch_size).collect()
-        };
+        if !guard.events.is_empty() {
+            let max_batch_size = guard.max_batch_size;
 
-        if !events.is_empty() {
+            let events = if guard.events.len() < max_batch_size {
+                mem::take(&mut guard.events)
+            } else {
+                guard.events.drain(..max_batch_size).collect()
+            };
+
             let clone = self.clone();
             guard
                 .runtime
                 .flush(events.clone(), move || clone.requeue_events(events));
         }
+    }
+
+    pub fn queue_len(&self) -> usize {
+        self.inner.lock().unwrap().events.len()
     }
 
     fn requeue_events(&self, events: Vec<IdempotentEvent>) {
