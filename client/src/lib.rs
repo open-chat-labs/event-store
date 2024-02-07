@@ -1,4 +1,4 @@
-use event_sink_canister::{Event, IdempotentEvent, TimestampMillis};
+use event_sink_canister::{IdempotentEvent, TimestampMillis};
 use std::mem;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
@@ -13,6 +13,8 @@ struct ClientInner<R> {
     next_flush_scheduled: Option<TimestampMillis>,
     events: Vec<IdempotentEvent>,
 }
+
+pub use event_sink_canister::Event;
 
 pub trait Runtime {
     fn schedule_flush<F: FnOnce() + 'static>(&mut self, delay: Duration, callback: F);
