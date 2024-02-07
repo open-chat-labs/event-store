@@ -2,7 +2,9 @@
 use crate::rng::{random, random_bytes, random_principal, random_string};
 use crate::setup::setup_new_env;
 use candid::Principal;
-use event_sink_canister::{Event, EventsArgs, InitArgs, PushEventsArgs, RemoveEventsArgs};
+use event_sink_canister::{
+    EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs, RemoveEventsArgs,
+};
 use pocket_ic::PocketIc;
 use serde_bytes::ByteBuf;
 use std::fs::File;
@@ -39,7 +41,7 @@ fn read_push_remove_events_succeeds() {
         canister_id,
         &PushEventsArgs {
             events: (0..10)
-                .map(|i| Event {
+                .map(|i| IdempotentEvent {
                     idempotency_key: random(),
                     name: random_string(),
                     timestamp: i,

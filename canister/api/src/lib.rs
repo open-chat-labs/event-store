@@ -14,6 +14,13 @@ pub type TimestampMillis = u64;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct Event {
+    pub name: String,
+    pub timestamp: TimestampMillis,
+    pub payload: ByteBuf,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct IdempotentEvent {
     pub idempotency_key: u128,
     pub name: String,
     pub timestamp: TimestampMillis,
