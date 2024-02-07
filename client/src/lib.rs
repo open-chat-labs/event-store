@@ -94,6 +94,8 @@ impl<R: Runtime + Send + 'static> Client<R> {
             idempotency_key,
             name: event.name,
             timestamp: event.timestamp,
+            user: event.user,
+            source: event.source,
             payload: event.payload,
         });
         self.post_events_added(guard, true);

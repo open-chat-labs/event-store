@@ -45,6 +45,8 @@ fn read_push_remove_events_succeeds() {
                     idempotency_key: random(),
                     name: random_string(),
                     timestamp: i,
+                    user: None,
+                    source: None,
                     payload: ByteBuf::from(random_bytes()),
                 })
                 .collect(),

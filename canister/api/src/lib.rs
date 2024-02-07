@@ -16,6 +16,8 @@ pub type TimestampMillis = u64;
 pub struct Event {
     pub name: String,
     pub timestamp: TimestampMillis,
+    pub user: Option<String>,
+    pub source: Option<String>,
     pub payload: ByteBuf,
 }
 
@@ -24,6 +26,8 @@ pub struct IdempotentEvent {
     pub idempotency_key: u128,
     pub name: String,
     pub timestamp: TimestampMillis,
+    pub user: Option<String>,
+    pub source: Option<String>,
     pub payload: ByteBuf,
 }
 
@@ -32,5 +36,7 @@ pub struct IndexedEvent {
     pub index: u64,
     pub name: String,
     pub timestamp: TimestampMillis,
+    pub user: Option<String>,
+    pub source: Option<String>,
     pub payload: ByteBuf,
 }
