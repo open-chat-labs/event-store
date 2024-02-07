@@ -2,6 +2,8 @@
 members = [
     "canister/api",
     "canister/impl",
+    "client",
+    "client/cdk_runtime",
     "integration_tests",
 ]
 resolver = "2"
@@ -9,6 +11,7 @@ resolver = "2"
 [workspace.dependencies]
 candid = "0.10.3"
 ic-cdk = "=0.12.0"
+ic-cdk-timers = "0.6.0"
 ic-stable-structures = "0.6.2"
 pocket-ic = "2.0.1"
 rand = "0.8.5"

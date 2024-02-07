@@ -1,5 +1,5 @@
 use candid::Deserialize;
-use event_sink_canister::{Event, IndexedEvent, TimestampMillis};
+use event_sink_canister::{IdempotentEvent, IndexedEvent, TimestampMillis};
 use serde::Serialize;
 use std::collections::btree_map::Entry::Vacant;
 use std::collections::{BTreeMap, VecDeque};
@@ -33,7 +33,7 @@ impl Events {
         }
     }
 
-    pub fn push(&mut self, event: Event, now: TimestampMillis) {
+    pub fn push(&mut self, event: IdempotentEvent, now: TimestampMillis) {
         match self.recently_added.entry(event.idempotency_key) {
             Vacant(e) => e.insert(now),
             _ => return,
