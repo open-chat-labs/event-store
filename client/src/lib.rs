@@ -15,8 +15,12 @@ struct ClientInner<R> {
 }
 
 pub trait Runtime {
-    fn schedule_flush<F: FnOnce() + 'static>(&mut self, delay: Duration, callback: F);
-    fn flush<F: FnOnce() + 'static>(&mut self, events: Vec<IdempotentEvent>, trigger_retry: F);
+    fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, delay: Duration, callback: F);
+    fn flush<F: FnOnce() + Send + 'static>(
+        &mut self,
+        events: Vec<IdempotentEvent>,
+        trigger_retry: F,
+    );
     fn rng(&mut self) -> u128;
     fn now(&self) -> TimestampMillis;
 }
@@ -33,7 +37,7 @@ impl<R> Client<R> {
     }
 }
 
-impl<R: Runtime + 'static> Client<R> {
+impl<R: Runtime + Send + 'static> Client<R> {
     pub fn init_with_events(
         runtime: R,
         flush_interval: Duration,

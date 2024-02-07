@@ -1,0 +1,17 @@
+[package]
+name = "event_sink_client_agent_runtime"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+candid.workspace = true
+event_sink_canister.path = "../../canister/api"
+event_sink_client.path = ".."
+ic-agent.workspace = true
+rand.workspace = true
+tokio.workspace = true
+tokio.features = ["full"]
+tokio-util.workspace = true

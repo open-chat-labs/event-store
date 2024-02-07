@@ -32,12 +32,16 @@ impl CdkRuntime {
 }
 
 impl Runtime for CdkRuntime {
-    fn schedule_flush<F: FnOnce() + 'static>(&mut self, delay: Duration, callback: F) {
+    fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, delay: Duration, callback: F) {
         self.clear_timer();
         self.scheduled_flush_timer = Some(ic_cdk_timers::set_timer(delay, callback));
     }
 
-    fn flush<F: FnOnce() + 'static>(&mut self, events: Vec<IdempotentEvent>, trigger_retry: F) {
+    fn flush<F: FnOnce() + Send + 'static>(
+        &mut self,
+        events: Vec<IdempotentEvent>,
+        trigger_retry: F,
+    ) {
         self.clear_timer();
         ic_cdk::spawn(flush_async(self.canister_id, events, trigger_retry))
     }

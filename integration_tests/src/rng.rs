@@ -1,12 +1,11 @@
 use candid::Principal;
 use rand::distributions::{Distribution, Standard};
-use rand::Rng;
 
 pub fn random<T>() -> T
 where
     Standard: Distribution<T>,
 {
-    rand::thread_rng().gen()
+    rand::random()
 }
 
 pub fn random_principal() -> Principal {
