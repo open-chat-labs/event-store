@@ -236,3 +236,27 @@ impl<'de, R: Deserialize<'de>> Deserialize<'de> for Client<R> {
         })
     }
 }
+
+#[cfg(test)]
+pub struct TestRuntime {}
+
+#[cfg(test)]
+impl Runtime for TestRuntime {
+    fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, _delay: Duration, _callback: F) {}
+
+    fn flush<F: FnOnce() + Send + 'static>(
+        &mut self,
+        _event_sync_canister_id: Principal,
+        _events: Vec<IdempotentEvent>,
+        _trigger_retry: F,
+    ) {
+    }
+
+    fn rng(&mut self) -> u128 {
+        0
+    }
+
+    fn now(&self) -> TimestampMillis {
+        0
+    }
+}
