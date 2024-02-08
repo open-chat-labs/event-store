@@ -6,7 +6,7 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::time::Duration;
-use tracing::error;
+use tracing::{error, trace};
 
 pub struct CdkRuntime {
     rng: StdRng,
@@ -58,7 +58,7 @@ async fn flush_async<F: FnOnce()>(
         trigger_retry();
         error!(?error, %canister_id, events = events_len, "Failed to call 'push_events'");
     } else {
-        error!(%canister_id, events = events_len, "Successfully pushed events");
+        trace!(%canister_id, events = events_len, "Successfully pushed events");
     }
 }
 
