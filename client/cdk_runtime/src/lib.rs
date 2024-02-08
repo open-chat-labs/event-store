@@ -58,7 +58,7 @@ async fn flush_async<F: FnOnce()>(
         trigger_retry();
         error!(%canister_id, events = events_len, ?error, "Failed to call 'push_events'");
     } else {
-        trace!(%canister_id, events = events_len, "Successfully pushed events");
+        trace!(%canister_id, events = events_len, "Successfully called `push_events`");
     }
 }
 
