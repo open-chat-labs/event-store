@@ -13,6 +13,7 @@ pub struct EventSinkClient<R> {
 }
 
 type Client<R> = EventSinkClient<R>;
+type ClientBuilder<R> = EventSinkClientBuilder<R>;
 
 #[derive(Serialize, Deserialize)]
 struct ClientInner<R> {
@@ -71,9 +72,9 @@ pub struct EventSinkInfo {
     pub pending_events: u32,
 }
 
-impl<R: Runtime + Send + 'static> EventSinkClientBuilder<R> {
-    pub fn new(event_sink_canister_id: Principal, runtime: R) -> EventSinkClientBuilder<R> {
-        EventSinkClientBuilder {
+impl<R: Runtime + Send + 'static> ClientBuilder<R> {
+    pub fn new(event_sink_canister_id: Principal, runtime: R) -> ClientBuilder<R> {
+        ClientBuilder {
             event_sink_canister_id,
             runtime,
             flush_delay: None,
