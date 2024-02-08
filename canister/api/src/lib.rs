@@ -1,6 +1,5 @@
 use candid::{CandidType, Deserialize};
 use serde::Serialize;
-use serde_bytes::ByteBuf;
 
 mod lifecycle;
 mod queries;
@@ -18,7 +17,8 @@ pub struct Event {
     pub timestamp: TimestampMillis,
     pub user: Option<String>,
     pub source: Option<String>,
-    pub payload: ByteBuf,
+    #[serde(with = "serde_bytes")]
+    pub payload: Vec<u8>,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -28,7 +28,8 @@ pub struct IdempotentEvent {
     pub timestamp: TimestampMillis,
     pub user: Option<String>,
     pub source: Option<String>,
-    pub payload: ByteBuf,
+    #[serde(with = "serde_bytes")]
+    pub payload: Vec<u8>,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -38,5 +39,6 @@ pub struct IndexedEvent {
     pub timestamp: TimestampMillis,
     pub user: Option<String>,
     pub source: Option<String>,
-    pub payload: ByteBuf,
+    #[serde(with = "serde_bytes")]
+    pub payload: Vec<u8>,
 }

@@ -6,7 +6,6 @@ use event_sink_canister::{
     EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs, RemoveEventsArgs,
 };
 use pocket_ic::PocketIc;
-use serde_bytes::ByteBuf;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
@@ -47,7 +46,7 @@ fn read_push_remove_events_succeeds() {
                     timestamp: i,
                     user: None,
                     source: None,
-                    payload: ByteBuf::from(random_bytes()),
+                    payload: random_bytes(),
                 })
                 .collect(),
         },

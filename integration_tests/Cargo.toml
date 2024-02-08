@@ -11,4 +11,3 @@ event_sink_canister.path = "../canister/api"
 pocket-ic.workspace = true
 rand.workspace = true
 serde.workspace = true
-serde_bytes.workspace = true
