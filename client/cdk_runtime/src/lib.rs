@@ -56,7 +56,7 @@ async fn flush_async<F: FnOnce()>(
         ic_cdk::call::<_, ()>(canister_id, "push_events", (PushEventsArgs { events },)).await
     {
         trigger_retry();
-        error!(?error, %canister_id, events = events_len, "Failed to call 'push_events'");
+        error!(%canister_id, events = events_len, ?error, "Failed to call 'push_events'");
     } else {
         trace!(%canister_id, events = events_len, "Successfully pushed events");
     }
