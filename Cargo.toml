@@ -6,6 +6,7 @@ members = [
     "client/agent_runtime",
     "client/cdk_runtime",
     "integration_tests",
+    "utils",
 ]
 resolver = "2"
 

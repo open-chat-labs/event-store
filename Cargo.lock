@@ -493,6 +493,7 @@ version = "0.1.0"
 dependencies = [
  "candid",
  "event_sink_canister",
+ "event_sink_utils",
  "ic-cdk",
  "ic-stable-structures",
  "rmp-serde",
@@ -532,6 +533,13 @@ dependencies = [
  "ic-cdk-timers",
  "ic_principal",
  "rand",
+ "serde",
+]
+
+[[package]]
+name = "event_sink_utils"
+version = "0.1.0"
+dependencies = [
  "serde",
 ]
 
