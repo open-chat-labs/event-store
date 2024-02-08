@@ -1,6 +1,7 @@
 use crate::env;
 use crate::model::events::Events;
 use candid::Principal;
+use event_sink_utils::EventDeduper;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::HashSet;
@@ -15,6 +16,7 @@ pub struct State {
     read_events_whitelist: HashSet<Principal>,
     remove_events_whitelist: HashSet<Principal>,
     pub events: Events,
+    pub event_deduper: EventDeduper,
 }
 
 const STATE_ALREADY_INITIALIZED: &str = "State has already been initialized";
@@ -53,6 +55,7 @@ impl State {
             read_events_whitelist,
             remove_events_whitelist,
             events: Events::default(),
+            event_deduper: EventDeduper::default(),
         }
     }
 
