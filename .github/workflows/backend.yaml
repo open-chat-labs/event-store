@@ -38,9 +38,6 @@ jobs:
         with:
           shared-key: "build-debug"
           save-if: "false"
-      - uses: arduino/setup-protoc@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
