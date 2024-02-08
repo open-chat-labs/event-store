@@ -504,6 +504,7 @@ name = "event_sink_client"
 version = "0.1.0"
 dependencies = [
  "event_sink_canister",
+ "ic_principal",
 ]
 
 [[package]]
@@ -514,6 +515,7 @@ dependencies = [
  "event_sink_canister",
  "event_sink_client",
  "ic-agent",
+ "ic_principal",
  "rand",
  "tokio",
  "tokio-util",
@@ -523,11 +525,11 @@ dependencies = [
 name = "event_sink_client_cdk_runtime"
 version = "0.1.0"
 dependencies = [
- "candid",
  "event_sink_canister",
  "event_sink_client",
  "ic-cdk",
  "ic-cdk-timers",
+ "ic_principal",
  "rand",
 ]
 

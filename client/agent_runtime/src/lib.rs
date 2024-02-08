@@ -1,21 +1,19 @@
-use candid::Principal;
 use event_sink_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
 use event_sink_client::Runtime;
 use ic_agent::Agent;
+use ic_principal::Principal;
 use rand::random;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tokio_util::sync::CancellationToken;
 
 pub struct AgentRuntime {
-    canister_id: Principal,
     agent: Agent,
     scheduler_task_cancellation_token: Option<CancellationToken>,
 }
 
 impl AgentRuntime {
-    pub fn new(canister_id: Principal, agent: Agent) -> AgentRuntime {
+    pub fn new(agent: Agent) -> AgentRuntime {
         AgentRuntime {
-            canister_id,
             agent,
             scheduler_task_cancellation_token: None,
         }
@@ -44,11 +42,11 @@ impl Runtime for AgentRuntime {
 
     fn flush<F: FnOnce() + Send + 'static>(
         &mut self,
+        canister_id: Principal,
         events: Vec<IdempotentEvent>,
         trigger_retry: F,
     ) {
         self.cancel_scheduler_task();
-        let canister_id = self.canister_id;
         let agent = self.agent.clone();
 
         tokio::spawn(async move { flush_async(canister_id, agent, events, trigger_retry).await });
