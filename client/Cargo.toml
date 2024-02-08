@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 ic_principal.workspace = true
 event_sink_canister.path = "../canister/api"
+serde.workspace = true
