@@ -35,6 +35,14 @@ impl EventDeduper {
         }
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.recently_added.is_empty()
+    }
+
+    pub fn len(&self) -> usize {
+        self.recently_added.len()
+    }
+
     fn prune_if_due(&mut self, now: TimestampMillis) {
         if now.saturating_sub(self.recently_added_last_pruned) > self.window_duration / 2 {
             let cutoff = now.saturating_sub(self.window_duration);
