@@ -1024,7 +1024,6 @@ dependencies = [
  "pocket-ic",
  "rand",
  "serde",
- "serde_bytes",
 ]
 
 [[package]]
