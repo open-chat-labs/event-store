@@ -44,10 +44,10 @@ impl<R> Client<R> {
         mem::take(&mut self.inner.lock().unwrap().events)
     }
 
-    pub fn info(&self) -> EventSinkInfo {
+    pub fn info(&self) -> EventSinkClientInfo {
         let guard = self.inner.lock().unwrap();
 
-        EventSinkInfo {
+        EventSinkClientInfo {
             event_sink_canister_id: guard.event_sink_canister_id,
             flush_delay: guard.flush_delay,
             max_batch_size: guard.max_batch_size as u32,
@@ -65,7 +65,7 @@ pub struct EventSinkClientBuilder<R> {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct EventSinkInfo {
+pub struct EventSinkClientInfo {
     pub event_sink_canister_id: Principal,
     pub flush_delay: Duration,
     pub max_batch_size: u32,
