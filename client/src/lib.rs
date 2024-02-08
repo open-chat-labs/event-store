@@ -64,7 +64,7 @@ pub struct EventSinkClientBuilder<R> {
     events: Vec<IdempotentEvent>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct EventSinkClientInfo {
     pub event_sink_canister_id: Principal,
     pub flush_delay: Duration,
