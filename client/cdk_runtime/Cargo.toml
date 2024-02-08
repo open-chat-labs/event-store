@@ -13,3 +13,4 @@ ic-cdk-timers.workspace = true
 ic_principal.workspace = true
 rand.workspace = true
 serde.workspace = true
+tracing.workspace = true

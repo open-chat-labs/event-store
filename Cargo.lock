@@ -534,6 +534,7 @@ dependencies = [
  "ic_principal",
  "rand",
  "serde",
+ "tracing",
 ]
 
 [[package]]

@@ -8,9 +8,11 @@ use std::time::Duration;
 const DEFAULT_FLUSH_DELAY: Duration = Duration::from_secs(300);
 const DEFAULT_MAX_BATCH_SIZE: u32 = 1000;
 
-pub struct Client<R> {
+pub struct EventSinkClient<R> {
     inner: Arc<Mutex<ClientInner<R>>>,
 }
+
+type Client<R> = EventSinkClient<R>;
 
 #[derive(Serialize, Deserialize)]
 struct ClientInner<R> {
