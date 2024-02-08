@@ -1,4 +1,5 @@
 use event_sink_canister::{IdempotentEvent, TimestampMillis};
+use ic_principal::Principal;
 use std::mem;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
@@ -11,6 +12,7 @@ pub struct Client<R> {
 }
 
 struct ClientInner<R> {
+    event_sink_canister_id: Principal,
     runtime: R,
     flush_delay: Duration,
     max_batch_size: usize,
@@ -24,6 +26,7 @@ pub trait Runtime {
     fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, delay: Duration, callback: F);
     fn flush<F: FnOnce() + Send + 'static>(
         &mut self,
+        event_sync_canister_id: Principal,
         events: Vec<IdempotentEvent>,
         trigger_retry: F,
     );
@@ -38,6 +41,7 @@ impl<R> Client<R> {
 }
 
 pub struct ClientBuilder<R> {
+    event_sink_canister_id: Principal,
     runtime: R,
     flush_delay: Option<Duration>,
     max_batch_size: Option<u32>,
@@ -45,8 +49,9 @@ pub struct ClientBuilder<R> {
 }
 
 impl<R: Runtime + Send + 'static> ClientBuilder<R> {
-    pub fn new(runtime: R) -> ClientBuilder<R> {
+    pub fn new(event_sink_canister_id: Principal, runtime: R) -> ClientBuilder<R> {
         ClientBuilder {
+            event_sink_canister_id,
             runtime,
             flush_delay: None,
             max_batch_size: None,
@@ -74,6 +79,7 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
         let max_batch_size = self.max_batch_size.unwrap_or(DEFAULT_MAX_BATCH_SIZE) as usize;
         let client = Client {
             inner: Arc::new(Mutex::new(ClientInner::new(
+                self.event_sink_canister_id,
                 self.runtime,
                 flush_delay,
                 max_batch_size,
@@ -115,9 +121,12 @@ impl<R: Runtime + Send + 'static> Client<R> {
             };
 
             let clone = self.clone();
+            let event_sink_canister_id = guard.event_sink_canister_id;
             guard
                 .runtime
-                .flush(events.clone(), move || clone.requeue_events(events));
+                .flush(event_sink_canister_id, events.clone(), move || {
+                    clone.requeue_events(events)
+                });
         }
     }
 
@@ -164,8 +173,14 @@ impl<R> Clone for Client<R> {
 }
 
 impl<R> ClientInner<R> {
-    pub fn new(runtime: R, flush_delay: Duration, max_batch_size: usize) -> ClientInner<R> {
+    pub fn new(
+        event_sink_canister_id: Principal,
+        runtime: R,
+        flush_delay: Duration,
+        max_batch_size: usize,
+    ) -> ClientInner<R> {
         ClientInner {
+            event_sink_canister_id,
             runtime,
             flush_delay,
             max_batch_size,
