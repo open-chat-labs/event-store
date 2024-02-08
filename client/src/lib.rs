@@ -55,7 +55,7 @@ impl<R> Client<R> {
     }
 }
 
-pub struct ClientBuilder<R> {
+pub struct EventSinkClientBuilder<R> {
     event_sink_canister_id: Principal,
     runtime: R,
     flush_delay: Option<Duration>,
@@ -71,9 +71,9 @@ pub struct EventSinkInfo {
     pub pending_events: u32,
 }
 
-impl<R: Runtime + Send + 'static> ClientBuilder<R> {
-    pub fn new(event_sink_canister_id: Principal, runtime: R) -> ClientBuilder<R> {
-        ClientBuilder {
+impl<R: Runtime + Send + 'static> EventSinkClientBuilder<R> {
+    pub fn new(event_sink_canister_id: Principal, runtime: R) -> EventSinkClientBuilder<R> {
+        EventSinkClientBuilder {
             event_sink_canister_id,
             runtime,
             flush_delay: None,
