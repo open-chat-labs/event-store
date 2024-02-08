@@ -51,7 +51,7 @@ impl<R> Client<R> {
             event_sink_canister_id: guard.event_sink_canister_id,
             flush_delay: guard.flush_delay,
             max_batch_size: guard.max_batch_size as u32,
-            pending_events: guard.events.len() as u32,
+            events_pending: guard.events.len() as u32,
         }
     }
 }
@@ -69,7 +69,7 @@ pub struct EventSinkInfo {
     pub event_sink_canister_id: Principal,
     pub flush_delay: Duration,
     pub max_batch_size: u32,
-    pub pending_events: u32,
+    pub events_pending: u32,
 }
 
 impl<R: Runtime + Send + 'static> ClientBuilder<R> {
