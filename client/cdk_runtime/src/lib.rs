@@ -4,6 +4,7 @@ use ic_cdk_timers::TimerId;
 use ic_principal::Principal;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::time::Duration;
 
 pub struct CdkRuntime {
@@ -66,5 +67,24 @@ impl Default for CdkRuntime {
             rng: StdRng::from_seed(seed),
             scheduled_flush_timer: None,
         }
+    }
+}
+
+impl Serialize for CdkRuntime {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_unit()
+    }
+}
+
+impl<'de> Deserialize<'de> for CdkRuntime {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_unit(serde::de::IgnoredAny)?;
+        Ok(CdkRuntime::default())
     }
 }

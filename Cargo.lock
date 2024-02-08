@@ -505,6 +505,7 @@ version = "0.1.0"
 dependencies = [
  "event_sink_canister",
  "ic_principal",
+ "serde",
 ]
 
 [[package]]
@@ -531,6 +532,7 @@ dependencies = [
  "ic-cdk-timers",
  "ic_principal",
  "rand",
+ "serde",
 ]
 
 [[package]]

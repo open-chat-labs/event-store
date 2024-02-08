@@ -1,5 +1,6 @@
 use event_sink_canister::{IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::mem;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
@@ -11,6 +12,7 @@ pub struct Client<R> {
     inner: Arc<Mutex<ClientInner<R>>>,
 }
 
+#[derive(Serialize, Deserialize)]
 struct ClientInner<R> {
     event_sink_canister_id: Principal,
     runtime: R,
@@ -187,5 +189,28 @@ impl<R> ClientInner<R> {
             next_flush_scheduled: None,
             events: Vec::new(),
         }
+    }
+}
+
+impl<R: Serialize> Serialize for Client<R> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let inner = self.inner.lock().unwrap();
+        inner.serialize(serializer)
+    }
+}
+
+impl<'de, R: Deserialize<'de>> Deserialize<'de> for Client<R> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let inner = ClientInner::deserialize(deserializer)?;
+
+        Ok(Client {
+            inner: Arc::new(Mutex::new(inner)),
+        })
     }
 }
