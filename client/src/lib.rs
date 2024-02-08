@@ -40,6 +40,17 @@ impl<R> Client<R> {
     pub fn take_events(&mut self) -> Vec<IdempotentEvent> {
         mem::take(&mut self.inner.lock().unwrap().events)
     }
+
+    pub fn info(&self) -> EventSinkInfo {
+        let guard = self.inner.lock().unwrap();
+
+        EventSinkInfo {
+            event_sink_canister_id: guard.event_sink_canister_id,
+            flush_delay: guard.flush_delay,
+            max_batch_size: guard.max_batch_size as u32,
+            pending_events: guard.events.len() as u32,
+        }
+    }
 }
 
 pub struct ClientBuilder<R> {
@@ -48,6 +59,14 @@ pub struct ClientBuilder<R> {
     flush_delay: Option<Duration>,
     max_batch_size: Option<u32>,
     events: Vec<IdempotentEvent>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct EventSinkInfo {
+    pub event_sink_canister_id: Principal,
+    pub flush_delay: Duration,
+    pub max_batch_size: u32,
+    pub pending_events: u32,
 }
 
 impl<R: Runtime + Send + 'static> ClientBuilder<R> {
