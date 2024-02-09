@@ -1,5 +1,7 @@
 use event_sink_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
-use event_sink_client::Runtime;
+use event_sink_client::{
+    FlushOutcome, Runtime, FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS,
+};
 use ic_cdk_timers::TimerId;
 use ic_principal::Principal;
 use rand::rngs::StdRng;
@@ -27,14 +29,14 @@ impl Runtime for CdkRuntime {
         self.scheduled_flush_timer = Some(ic_cdk_timers::set_timer(delay, callback));
     }
 
-    fn flush<F: FnOnce() + Send + 'static>(
+    fn flush<F: FnOnce(FlushOutcome) + Send + 'static>(
         &mut self,
         canister_id: Principal,
         events: Vec<IdempotentEvent>,
-        trigger_retry: F,
+        on_complete: F,
     ) {
         self.clear_timer();
-        ic_cdk::spawn(flush_async(canister_id, events, trigger_retry))
+        ic_cdk::spawn(flush_async(canister_id, events, on_complete))
     }
 
     fn rng(&mut self) -> u128 {
@@ -46,18 +48,19 @@ impl Runtime for CdkRuntime {
     }
 }
 
-async fn flush_async<F: FnOnce()>(
+async fn flush_async<F: FnOnce(FlushOutcome)>(
     canister_id: Principal,
     events: Vec<IdempotentEvent>,
-    trigger_retry: F,
+    on_complete: F,
 ) {
     let events_len = events.len();
     if let Err(error) =
         ic_cdk::call::<_, ()>(canister_id, "push_events", (PushEventsArgs { events },)).await
     {
-        trigger_retry();
+        on_complete(FLUSH_OUTCOME_FAILED_SHOULD_RETRY);
         error!(%canister_id, events = events_len, ?error, "Failed to call 'push_events'");
     } else {
+        on_complete(FLUSH_OUTCOME_SUCCESS);
         trace!(%canister_id, events = events_len, "Successfully called `push_events`");
     }
 }

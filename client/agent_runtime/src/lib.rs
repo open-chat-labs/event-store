@@ -1,5 +1,7 @@
 use event_sink_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
-use event_sink_client::Runtime;
+use event_sink_client::{
+    FlushOutcome, Runtime, FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS,
+};
 use ic_agent::Agent;
 use ic_principal::Principal;
 use rand::random;
@@ -40,16 +42,16 @@ impl Runtime for AgentRuntime {
         });
     }
 
-    fn flush<F: FnOnce() + Send + 'static>(
+    fn flush<F: FnOnce(FlushOutcome) + Send + 'static>(
         &mut self,
         canister_id: Principal,
         events: Vec<IdempotentEvent>,
-        trigger_retry: F,
+        on_complete: F,
     ) {
         self.cancel_scheduler_task();
         let agent = self.agent.clone();
 
-        tokio::spawn(async move { flush_async(canister_id, agent, events, trigger_retry).await });
+        tokio::spawn(async move { flush_async(canister_id, agent, events, on_complete).await });
     }
 
     fn rng(&mut self) -> u128 {
@@ -64,11 +66,11 @@ impl Runtime for AgentRuntime {
     }
 }
 
-async fn flush_async<F: FnOnce() + Send + 'static>(
+async fn flush_async<F: FnOnce(FlushOutcome) + Send + 'static>(
     canister_id: Principal,
     agent: Agent,
     events: Vec<IdempotentEvent>,
-    trigger_retry: F,
+    on_complete: F,
 ) {
     if agent
         .update(&canister_id, "push_events".to_string())
@@ -77,6 +79,8 @@ async fn flush_async<F: FnOnce() + Send + 'static>(
         .await
         .is_err()
     {
-        trigger_retry()
+        on_complete(FLUSH_OUTCOME_FAILED_SHOULD_RETRY)
+    } else {
+        on_complete(FLUSH_OUTCOME_SUCCESS)
     }
 }
