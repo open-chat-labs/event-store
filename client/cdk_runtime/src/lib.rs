@@ -75,6 +75,7 @@ impl Default for CdkRuntime {
 fn rng_seed() -> [u8; 32] {
     let mut seed = [0; 32];
     seed[..8].copy_from_slice(&ic_cdk::api::time().to_ne_bytes());
+    seed
 }
 
 #[cfg(not(target_arch = "wasm32"))]
