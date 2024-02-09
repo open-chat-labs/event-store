@@ -238,10 +238,10 @@ impl<'de, R: Deserialize<'de>> Deserialize<'de> for Client<R> {
 }
 
 #[cfg(test)]
-pub struct TestRuntime {}
+pub struct NullRuntime {}
 
 #[cfg(test)]
-impl Runtime for TestRuntime {
+impl Runtime for NullRuntime {
     fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, _delay: Duration, _callback: F) {}
 
     fn flush<F: FnOnce() + Send + 'static>(
