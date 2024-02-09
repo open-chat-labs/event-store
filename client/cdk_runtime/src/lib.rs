@@ -3,7 +3,7 @@ use event_sink_client::Runtime;
 use ic_cdk_timers::TimerId;
 use ic_principal::Principal;
 use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng};
+use rand::{random, Rng, SeedableRng};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::time::Duration;
 use tracing::{error, trace};
@@ -64,14 +64,22 @@ async fn flush_async<F: FnOnce()>(
 
 impl Default for CdkRuntime {
     fn default() -> Self {
-        let mut seed = [0; 32];
-        seed[..8].copy_from_slice(&ic_cdk::api::time().to_ne_bytes());
-
         CdkRuntime {
-            rng: StdRng::from_seed(seed),
+            rng: StdRng::from_seed(rng_seed()),
             scheduled_flush_timer: None,
         }
     }
+}
+
+#[cfg(target_arch = "wasm32")]
+fn rng_seed() -> [u8; 32] {
+    let mut seed = [0; 32];
+    seed[..8].copy_from_slice(&ic_cdk::api::time().to_ne_bytes());
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+fn rng_seed() -> [u8; 32] {
+    random()
 }
 
 impl Serialize for CdkRuntime {
