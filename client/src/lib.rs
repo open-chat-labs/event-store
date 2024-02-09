@@ -56,6 +56,12 @@ impl<R> Client<R> {
     }
 }
 
+impl Client<NullRuntime> {
+    pub fn null() -> Client<NullRuntime> {
+        ClientBuilder::new(Principal::anonymous(), NullRuntime).build()
+    }
+}
+
 pub struct EventSinkClientBuilder<R> {
     event_sink_canister_id: Principal,
     runtime: R,
@@ -237,7 +243,7 @@ impl<'de, R: Deserialize<'de>> Deserialize<'de> for Client<R> {
     }
 }
 
-pub struct NullRuntime {}
+pub struct NullRuntime;
 
 impl Runtime for NullRuntime {
     fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, _delay: Duration, _callback: F) {}
