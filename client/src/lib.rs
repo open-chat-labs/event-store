@@ -22,7 +22,6 @@ type Client<R> = EventSinkClient<R>;
 type ClientBuilder<R> = EventSinkClientBuilder<R>;
 
 #[derive(Serialize, Deserialize)]
-#[serde(default)]
 struct ClientInner<R> {
     event_sink_canister_id: Principal,
     runtime: R,
@@ -30,7 +29,9 @@ struct ClientInner<R> {
     max_batch_size: usize,
     events: Vec<IdempotentEvent>,
     next_flush_scheduled: Option<TimestampMillis>,
+    #[serde(default)]
     flush_in_progress: bool,
+    #[serde(default)]
     total_events_flushed: u64,
 }
 
