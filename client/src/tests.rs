@@ -46,9 +46,11 @@ fn batch_flushed_when_flush_delay_reached() {
         }
         runtime.inner().timestamp += 4999;
         runtime.tick();
+        runtime.tick();
         assert_eq!(client.info().events_pending, 5);
         assert_eq!(runtime.inner().flush_invocations, i);
         runtime.inner().timestamp += 1;
+        runtime.tick();
         runtime.tick();
         assert_eq!(client.info().events_pending, 0);
         assert_eq!(runtime.inner().flush_invocations, i + 1);
@@ -115,7 +117,7 @@ impl Runtime for TestRuntime {
 
 impl TestRuntime {
     fn tick(&self) {
-        while let Some(callback) = self.take_callback_if_due() {
+        if let Some(callback) = self.take_callback_if_due() {
             callback()
         }
     }
