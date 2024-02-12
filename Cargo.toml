@@ -12,12 +12,12 @@ resolver = "2"
 
 [workspace.dependencies]
 candid = "0.10.3"
-ic-agent = "0.32.0"
-ic-cdk = "=0.12.0"
+ic-agent = "0.33.0"
+ic-cdk = "0.12.0"
 ic-cdk-timers = "0.6.0"
 ic_principal = "0.1.1"
 ic-stable-structures = "0.6.2"
-pocket-ic = "2.0.1"
+pocket-ic = "2.1.0"
 rand = "0.8.5"
 rmp-serde = "1.1.2"
 serde = "1.0.196"
@@ -26,6 +26,3 @@ test-case = "3.3.1"
 tokio = "1.36.0"
 tokio-util = "0.7.10"
 tracing = "0.1.40"
-
-[patch.crates-io]
-pocket-ic = { git = "https://github.com/dfinity/ic", rev = "044cfd5147fc97d7e5a214966941b6580c325d72" }
