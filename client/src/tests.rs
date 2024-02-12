@@ -16,7 +16,7 @@ fn batch_flushed_when_max_batch_size_reached(flush_synchronously: bool) {
 
     for i in 0..10 {
         for _ in 0..5 {
-            client.push_event(Event {
+            client.push(Event {
                 name: i.to_string(),
                 timestamp: 0,
                 user: None,
@@ -41,7 +41,7 @@ fn batch_flushed_when_flush_delay_reached(flush_synchronously: bool) {
 
     for i in 0..10 {
         for _ in 0..5 {
-            client.push_event(Event {
+            client.push(Event {
                 name: i.to_string(),
                 timestamp: 0,
                 user: None,
