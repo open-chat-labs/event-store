@@ -5,6 +5,9 @@ use std::mem;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 
+#[cfg(test)]
+mod tests;
+
 const DEFAULT_FLUSH_DELAY: Duration = Duration::from_secs(300);
 const DEFAULT_MAX_BATCH_SIZE: u32 = 1000;
 
@@ -51,11 +54,11 @@ pub trait Runtime {
 
 impl<R> Client<R> {
     pub fn take_events(&mut self) -> Vec<IdempotentEvent> {
-        mem::take(&mut self.inner.lock().unwrap().events)
+        mem::take(&mut self.inner.try_lock().unwrap().events)
     }
 
     pub fn info(&self) -> EventSinkClientInfo {
-        let guard = self.inner.lock().unwrap();
+        let guard = self.inner.try_lock().unwrap();
 
         EventSinkClientInfo {
             event_sink_canister_id: guard.event_sink_canister_id,
@@ -133,7 +136,7 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
             ))),
         };
         if any_events {
-            let guard = client.inner.lock().unwrap();
+            let guard = client.inner.try_lock().unwrap();
             client.process_events(guard, false);
         }
         client
@@ -142,7 +145,7 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
 
 impl<R: Runtime + Send + 'static> Client<R> {
     pub fn push_event(&mut self, event: Event) {
-        let mut guard = self.inner.lock().unwrap();
+        let mut guard = self.inner.try_lock().unwrap();
         let idempotency_key = guard.runtime.rng();
         guard.events.push(IdempotentEvent {
             idempotency_key,
@@ -156,7 +159,11 @@ impl<R: Runtime + Send + 'static> Client<R> {
     }
 
     pub fn flush_batch(&self) {
-        let mut guard = self.inner.lock().unwrap();
+        let guard = self.inner.try_lock().unwrap();
+        self.flush_batch_within_lock(guard);
+    }
+
+    fn flush_batch_within_lock(&self, mut guard: MutexGuard<ClientInner<R>>) {
         guard.next_flush_scheduled = None;
 
         if !guard.events.is_empty() {
@@ -164,7 +171,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
 
             let max_batch_size = guard.max_batch_size;
 
-            let events = if guard.events.len() < max_batch_size {
+            let events = if guard.events.len() <= max_batch_size {
                 mem::take(&mut guard.events)
             } else {
                 guard.events.drain(..max_batch_size).collect()
@@ -180,10 +187,6 @@ impl<R: Runtime + Send + 'static> Client<R> {
         }
     }
 
-    pub fn queue_len(&self) -> usize {
-        self.inner.lock().unwrap().events.len()
-    }
-
     fn process_events(&self, guard: MutexGuard<ClientInner<R>>, can_flush_immediately: bool) {
         if guard.flush_in_progress {
             return;
@@ -191,7 +194,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
         let max_batch_size_reached = guard.events.len() >= guard.max_batch_size;
         if max_batch_size_reached {
             if can_flush_immediately {
-                self.flush_batch();
+                self.flush_batch_within_lock(guard);
             } else {
                 self.schedule_flush(guard, Duration::ZERO)
             }
@@ -211,7 +214,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
     }
 
     fn on_flush_complete(&mut self, outcome: FlushOutcome, events: Vec<IdempotentEvent>) {
-        let mut guard = self.inner.lock().unwrap();
+        let mut guard = self.inner.try_lock().unwrap();
         guard.flush_in_progress = false;
 
         match outcome {
@@ -266,7 +269,7 @@ impl<R: Serialize> Serialize for Client<R> {
     where
         S: Serializer,
     {
-        let inner = self.inner.lock().unwrap();
+        let inner = self.inner.try_lock().unwrap();
         inner.serialize(serializer)
     }
 }
@@ -293,8 +296,9 @@ impl Runtime for NullRuntime {
         &mut self,
         _event_sync_canister_id: Principal,
         _events: Vec<IdempotentEvent>,
-        _trigger_retry: F,
+        on_complete: F,
     ) {
+        on_complete(FLUSH_OUTCOME_SUCCESS)
     }
 
     fn rng(&mut self) -> u128 {
