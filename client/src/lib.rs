@@ -144,7 +144,7 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
 }
 
 impl<R: Runtime + Send + 'static> Client<R> {
-    pub fn push_event(&mut self, event: Event) {
+    pub fn push(&mut self, event: Event) {
         let mut guard = self.inner.try_lock().unwrap();
         let idempotency_key = guard.runtime.rng();
         guard.events.push(IdempotentEvent {
@@ -155,6 +155,22 @@ impl<R: Runtime + Send + 'static> Client<R> {
             source: event.source,
             payload: event.payload,
         });
+        self.process_events(guard, true);
+    }
+
+    pub fn push_many(&mut self, events: impl Iterator<Item = Event>) {
+        let mut guard = self.inner.try_lock().unwrap();
+        for event in events {
+            let idempotency_key = guard.runtime.rng();
+            guard.events.push(IdempotentEvent {
+                idempotency_key,
+                name: event.name,
+                timestamp: event.timestamp,
+                user: event.user,
+                source: event.source,
+                payload: event.payload,
+            });
+        }
         self.process_events(guard, true);
     }
 
