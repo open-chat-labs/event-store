@@ -1,9 +1,9 @@
 use event_sink_canister::{IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::mem;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
+use std::{mem, thread};
 
 #[cfg(test)]
 mod tests;
@@ -214,7 +214,23 @@ impl<R: Runtime + Send + 'static> Client<R> {
     }
 
     fn on_flush_complete(&mut self, outcome: FlushOutcome, events: Vec<IdempotentEvent>) {
-        let mut guard = self.inner.try_lock().unwrap();
+        if let Ok(guard) = self.inner.try_lock() {
+            self.on_flush_within_lock(guard, outcome, events);
+        } else {
+            let clone = self.clone();
+            thread::spawn(move || {
+                let guard = clone.inner.lock().unwrap();
+                clone.on_flush_within_lock(guard, outcome, events);
+            });
+        }
+    }
+
+    fn on_flush_within_lock(
+        &self,
+        mut guard: MutexGuard<ClientInner<R>>,
+        outcome: FlushOutcome,
+        events: Vec<IdempotentEvent>,
+    ) {
         guard.flush_in_progress = false;
 
         match outcome {

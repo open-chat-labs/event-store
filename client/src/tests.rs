@@ -2,11 +2,14 @@ use crate::{ClientBuilder, FlushOutcome, Runtime};
 use event_sink_canister::{Event, IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use std::sync::{Arc, Mutex, MutexGuard};
+use std::thread;
 use std::time::Duration;
+use test_case::test_case;
 
-#[test]
-fn batch_flushed_when_max_batch_size_reached() {
-    let runtime = TestRuntime::default();
+#[test_case(true)]
+#[test_case(false)]
+fn batch_flushed_when_max_batch_size_reached(flush_synchronously: bool) {
+    let runtime = TestRuntime::new(flush_synchronously);
     let mut client = ClientBuilder::new(Principal::anonymous(), runtime.clone())
         .with_max_batch_size(5)
         .build();
@@ -21,15 +24,17 @@ fn batch_flushed_when_max_batch_size_reached() {
                 payload: Vec::new(),
             });
         }
+        thread::sleep(Duration::from_millis(10));
         assert_eq!(client.info().events_pending, 0);
         assert_eq!(runtime.inner().flush_invocations, i + 1);
         runtime.tick();
     }
 }
 
-#[test]
-fn batch_flushed_when_flush_delay_reached() {
-    let runtime = TestRuntime::default();
+#[test_case(true)]
+#[test_case(false)]
+fn batch_flushed_when_flush_delay_reached(flush_synchronously: bool) {
+    let runtime = TestRuntime::new(flush_synchronously);
     let mut client = ClientBuilder::new(Principal::anonymous(), runtime.clone())
         .with_flush_delay(Duration::from_secs(5))
         .build();
@@ -47,11 +52,13 @@ fn batch_flushed_when_flush_delay_reached() {
         runtime.inner().timestamp += 4999;
         runtime.tick();
         runtime.tick();
+        thread::sleep(Duration::from_millis(10));
         assert_eq!(client.info().events_pending, 5);
         assert_eq!(runtime.inner().flush_invocations, i);
         runtime.inner().timestamp += 1;
         runtime.tick();
         runtime.tick();
+        thread::sleep(Duration::from_millis(10));
         assert_eq!(client.info().events_pending, 0);
         assert_eq!(runtime.inner().flush_invocations, i + 1);
     }
@@ -60,9 +67,17 @@ fn batch_flushed_when_flush_delay_reached() {
 #[derive(Default, Clone)]
 struct TestRuntime {
     inner: Arc<Mutex<TestRuntimeInner>>,
+    flush_synchronously: bool,
 }
 
 impl TestRuntime {
+    fn new(flush_synchronously: bool) -> TestRuntime {
+        TestRuntime {
+            flush_synchronously,
+            ..Default::default()
+        }
+    }
+
     fn inner(&self) -> MutexGuard<TestRuntimeInner> {
         self.inner.try_lock().unwrap()
     }
@@ -97,9 +112,16 @@ impl Runtime for TestRuntime {
     ) {
         let mut guard = self.inner();
         guard.flush_invocations += 1;
-        guard.callback_due_at = Some(guard.timestamp);
         let outcome = guard.flush_outcome;
-        guard.callback = Some(Box::new(move || on_complete(outcome)));
+
+        if self.flush_synchronously {
+            guard.callback_due_at = None;
+            guard.callback = None;
+            on_complete(outcome);
+        } else {
+            guard.callback_due_at = Some(guard.timestamp);
+            guard.callback = Some(Box::new(move || on_complete(outcome)));
+        }
     }
 
     fn rng(&mut self) -> u128 {
@@ -127,6 +149,7 @@ impl TestRuntime {
         guard
             .callback_due_at
             .filter(|ts| *ts <= guard.timestamp)
+            .take()
             .and_then(|_| guard.callback.take())
     }
 }
