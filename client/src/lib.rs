@@ -313,10 +313,17 @@ impl<'de, R: Deserialize<'de>> Deserialize<'de> for Client<R> {
         D: Deserializer<'de>,
     {
         let inner = ClientInner::deserialize(deserializer)?;
-
-        Ok(Client {
+        let any_events = !inner.events.is_empty();
+        let client = Client {
             inner: Arc::new(Mutex::new(inner)),
-        })
+        };
+
+        if any_events {
+            let guard = client.inner.try_lock().unwrap();
+            client.process_events(guard, false);
+        }
+
+        Ok(client)
     }
 }
 
