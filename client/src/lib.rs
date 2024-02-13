@@ -307,7 +307,7 @@ impl<R: Serialize> Serialize for Client<R> {
     }
 }
 
-impl<'de, R: Deserialize<'de>> Deserialize<'de> for Client<R> {
+impl<'de, R: Deserialize<'de> + Runtime + Send + 'static> Deserialize<'de> for Client<R> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
