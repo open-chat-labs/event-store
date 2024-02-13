@@ -307,16 +307,23 @@ impl<R: Serialize> Serialize for Client<R> {
     }
 }
 
-impl<'de, R: Deserialize<'de>> Deserialize<'de> for Client<R> {
+impl<'de, R: Deserialize<'de> + Runtime + Send + 'static> Deserialize<'de> for Client<R> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         let inner = ClientInner::deserialize(deserializer)?;
-
-        Ok(Client {
+        let any_events = !inner.events.is_empty();
+        let client = Client {
             inner: Arc::new(Mutex::new(inner)),
-        })
+        };
+
+        if any_events {
+            let guard = client.inner.try_lock().unwrap();
+            client.process_events(guard, false);
+        }
+
+        Ok(client)
     }
 }
 
