@@ -67,6 +67,7 @@ impl<R> Client<R> {
             max_batch_size: guard.max_batch_size as u32,
             events_pending: guard.events.len() as u32,
             flush_in_progress: guard.flush_in_progress,
+            next_flush_scheduled: guard.next_flush_scheduled,
             total_events_flushed: guard.total_events_flushed,
         }
     }
@@ -93,6 +94,7 @@ pub struct EventSinkClientInfo {
     pub max_batch_size: u32,
     pub events_pending: u32,
     pub flush_in_progress: bool,
+    pub next_flush_scheduled: Option<TimestampMillis>,
     pub total_events_flushed: u64,
 }
 
