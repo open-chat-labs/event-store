@@ -31,6 +31,7 @@ struct ClientInner<R> {
     flush_delay: Duration,
     max_batch_size: usize,
     events: Vec<IdempotentEvent>,
+    #[serde(skip)]
     next_flush_scheduled: Option<TimestampMillis>,
     #[serde(default)]
     flush_in_progress: bool,
