@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "strict": true,
+    "declaration": true,
+    "outDir": "./build",
+    "esModuleInterop": true,
+    "lib": ["es2020", "DOM"],
+    "isolatedModules": true
+  },
+  "include": ["src/**/*"]
+}
