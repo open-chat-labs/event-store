@@ -1,7 +1,7 @@
 {
   "canisters": {
     "event_sink": {
-      "candid": "canister/api/can.did",
+      "candid": "rs/canister/api/can.did",
       "package": "event_sink_canister_impl",
       "type": "rust"
     }

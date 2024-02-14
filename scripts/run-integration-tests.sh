@@ -18,10 +18,10 @@ else
     exit 1
 fi
 
-echo "Building wasms"
-dfx build
+echo "Building canister wasm"
+cargo build --target wasm32-unknown-unknown --release -p event_sink_canister_impl --locked
 
-cd integration_tests
+cd rs/integration_tests
 echo "PocketIC download starting"
 curl -sO https://download.dfinity.systems/ic/a7862784e8da4a97a1d608fd5b3db365de41a2d7/binaries/x86_64-$PLATFORM/pocket-ic.gz || exit 1
 gzip -df pocket-ic.gz
