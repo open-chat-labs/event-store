@@ -1,12 +1,12 @@
 [workspace]
 members = [
-    "canister/api",
-    "canister/impl",
-    "client",
-    "client/agent_runtime",
-    "client/cdk_runtime",
-    "integration_tests",
-    "utils",
+    "rs/canister/api",
+    "rs/canister/impl",
+    "rs/client",
+    "rs/client/agent_runtime",
+    "rs/client/cdk_runtime",
+    "rs/integration_tests",
+    "rs/utils",
 ]
 resolver = "2"
 
