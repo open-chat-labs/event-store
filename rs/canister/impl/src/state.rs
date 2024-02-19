@@ -1,6 +1,7 @@
 use crate::env;
 use crate::model::events::Events;
 use candid::Principal;
+use event_sink_canister::WhitelistedPrincipals;
 use event_sink_utils::EventDeduper;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
@@ -72,5 +73,13 @@ impl State {
     pub fn can_caller_remove_events(&self) -> bool {
         let caller = env::caller();
         self.remove_events_whitelist.contains(&caller)
+    }
+
+    pub fn whitelisted_principals(&self) -> WhitelistedPrincipals {
+        WhitelistedPrincipals {
+            push: self.push_events_whitelist.iter().copied().collect(),
+            read: self.read_events_whitelist.iter().copied().collect(),
+            remove: self.remove_events_whitelist.iter().copied().collect(),
+        }
     }
 }
