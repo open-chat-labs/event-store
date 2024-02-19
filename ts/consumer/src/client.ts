@@ -17,8 +17,7 @@ export class Client {
   }
 
   public static createFromPem(canisterId: string | Principal, pem: string): Client {
-    const privateKey = pem.replace(/\\n/g, '\n');
-    const buf = pemfile.decode(privateKey);
+    const buf = pemfile.decode(pem);
     if (buf.length != 118) {
       throw 'expecting byte length 118 but got ' + buf.length;
     }
