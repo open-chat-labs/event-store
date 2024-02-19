@@ -31,8 +31,14 @@ type RemoveEventsResponse = record {
   latest_event_index : opt nat64;
   earliest_event_index_stored : opt nat64;
 };
+type WhitelistedPrincipals = record {
+  remove : vec principal;
+  push : vec principal;
+  read : vec principal;
+};
 service : (InitArgs) -> {
   events : (EventsArgs) -> (EventsResponse) query;
   push_events : (PushEventsArgs) -> ();
   remove_events : (RemoveEventsArgs) -> (RemoveEventsResponse);
+  whitelisted_principals : () -> (WhitelistedPrincipals) query;
 }
