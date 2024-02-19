@@ -1,5 +1,7 @@
-import { Principal } from "@dfinity/principal";
 import { Actor, HttpAgent } from "@dfinity/agent";
+import { Principal } from "@dfinity/principal";
+import { Secp256k1KeyIdentity } from "@dfinity/identity-secp256k1";
+import pemfile from "pem-file";
 import { EventSinkCanister, idlFactory } from "./candid/idl";
 import type { EventsResponse, RemoveEventsResponse } from "./types";
 import { candidEventsResponse, candidRemoveEventsResponse } from "./mappers";
@@ -7,11 +9,22 @@ import { candidEventsResponse, candidRemoveEventsResponse } from "./mappers";
 export class Client {
   private readonly canister: EventSinkCanister;
 
-  public constructor(canisterId: Principal, agent: HttpAgent) {
+  public constructor(canisterId: string | Principal, agent: HttpAgent) {
     this.canister = Actor.createActor(idlFactory, {
       agent,
       canisterId,
     });
+  }
+
+  public static createFromPem(canisterId: string | Principal, pem: string): Client {
+    const privateKey = pem.replace(/\\n/g, '\n');
+    const buf = pemfile.decode(privateKey);
+    if (buf.length != 118) {
+      throw 'expecting byte length 118 but got ' + buf.length;
+    }
+    const identity = Secp256k1KeyIdentity.fromSecretKey(buf.subarray(7, 39));
+    const httpAgent = new HttpAgent({ identity });
+    return new Client(canisterId, httpAgent);
   }
 
   public async events(start: bigint, length: bigint): Promise<EventsResponse> {
