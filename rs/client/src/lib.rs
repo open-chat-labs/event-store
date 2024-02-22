@@ -5,6 +5,8 @@ use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use std::{mem, thread};
 
+#[cfg(feature = "json")]
+pub mod json;
 #[cfg(test)]
 mod tests;
 
@@ -124,6 +126,11 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
         self
     }
 
+    #[cfg(feature = "json")]
+    pub fn with_json_payloads(self) -> json::EventSinkClientBuilder<R> {
+        json::EventSinkClientBuilder::new(self)
+    }
+
     pub fn build(self) -> Client<R> {
         let flush_delay = self.flush_delay.unwrap_or(DEFAULT_FLUSH_DELAY);
         let max_batch_size = self.max_batch_size.unwrap_or(DEFAULT_MAX_BATCH_SIZE) as usize;
@@ -177,7 +184,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
         self.process_events(guard, true);
     }
 
-    pub fn flush_batch(&self) {
+    fn flush_batch(&self) {
         let guard = self.inner.try_lock().unwrap();
         self.flush_batch_within_lock(guard);
     }
