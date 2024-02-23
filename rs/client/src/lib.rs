@@ -57,9 +57,9 @@ pub struct EventBuilder {
 }
 
 impl EventBuilder {
-    pub fn new(name: impl Display, timestamp: TimestampMillis) -> Self {
+    pub fn new(name: impl Into<String>, timestamp: TimestampMillis) -> Self {
         Self {
-            name: name.to_string(),
+            name: name.into(),
             timestamp,
             user: None,
             source: None,
@@ -67,23 +67,23 @@ impl EventBuilder {
         }
     }
 
-    pub fn with_user(mut self, user: impl Display) -> Self {
-        self.user = Some(user.to_string());
+    pub fn with_user(mut self, user: impl Into<String>) -> Self {
+        self.user = Some(user.into());
         self
     }
 
-    pub fn with_maybe_user(mut self, user: Option<impl Display>) -> Self {
-        self.user = user.map(|u| u.to_string());
+    pub fn with_maybe_user(mut self, user: Option<impl Into<String>>) -> Self {
+        self.user = user.map(|u| u.into());
         self
     }
 
-    pub fn with_source(mut self, source: impl Display) -> Self {
-        self.source = Some(source.to_string());
+    pub fn with_source(mut self, source: impl Into<String>) -> Self {
+        self.source = Some(source.into());
         self
     }
 
-    pub fn with_maybe_source(mut self, source: Option<impl Display>) -> Self {
-        self.source = source.map(|u| u.to_string());
+    pub fn with_maybe_source(mut self, source: Option<impl Into<String>>) -> Self {
+        self.source = source.map(|u| u.into());
         self
     }
 
