@@ -16,7 +16,7 @@ fn batch_flushed_when_max_batch_size_reached(flush_synchronously: bool) {
 
     for i in 0..10 {
         for _ in 0..5 {
-            client.push(EventBuilder::new(i, 0).build());
+            client.push(EventBuilder::new(i.to_string(), 0).build());
         }
         thread::sleep(Duration::from_millis(10));
         assert_eq!(client.info().events_pending, 0);
@@ -35,7 +35,7 @@ fn batch_flushed_when_flush_delay_reached(flush_synchronously: bool) {
 
     for i in 0..10 {
         for _ in 0..5 {
-            client.push(EventBuilder::new(i, 0).build());
+            client.push(EventBuilder::new(i.to_string(), 0).build());
         }
         runtime.inner().timestamp += 4999;
         runtime.tick();

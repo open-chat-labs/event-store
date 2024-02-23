@@ -1,7 +1,6 @@
 use event_sink_canister::{IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::fmt::Display;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use std::{mem, thread};
