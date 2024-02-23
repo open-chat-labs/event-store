@@ -39,7 +39,73 @@ struct ClientInner<R> {
     total_events_flushed: u64,
 }
 
-pub use event_sink_canister::Event;
+pub struct Event {
+    name: String,
+    timestamp: TimestampMillis,
+    user: Option<String>,
+    source: Option<String>,
+    payload: Vec<u8>,
+}
+
+pub struct EventBuilder {
+    name: String,
+    timestamp: TimestampMillis,
+    user: Option<String>,
+    source: Option<String>,
+    payload: Vec<u8>,
+}
+
+impl EventBuilder {
+    pub fn new(name: impl Into<String>, timestamp: TimestampMillis) -> Self {
+        Self {
+            name: name.into(),
+            timestamp,
+            user: None,
+            source: None,
+            payload: Vec::new(),
+        }
+    }
+
+    pub fn with_user(mut self, user: impl Into<String>) -> Self {
+        self.user = Some(user.into());
+        self
+    }
+
+    pub fn with_maybe_user(mut self, user: Option<impl Into<String>>) -> Self {
+        self.user = user.map(|u| u.into());
+        self
+    }
+
+    pub fn with_source(mut self, source: impl Into<String>) -> Self {
+        self.source = Some(source.into());
+        self
+    }
+
+    pub fn with_maybe_source(mut self, source: Option<impl Into<String>>) -> Self {
+        self.source = source.map(|u| u.into());
+        self
+    }
+
+    pub fn with_payload(mut self, payload: Vec<u8>) -> Self {
+        self.payload = payload;
+        self
+    }
+
+    #[cfg(feature = "json")]
+    pub fn with_json_payload<P: Serialize>(self, payload: &P) -> Self {
+        self.with_payload(serde_json::to_vec(payload).unwrap())
+    }
+
+    pub fn build(self) -> Event {
+        Event {
+            name: self.name,
+            timestamp: self.timestamp,
+            user: self.user,
+            source: self.source,
+            payload: self.payload,
+        }
+    }
+}
 
 pub trait Runtime {
     fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, delay: Duration, callback: F);
@@ -177,7 +243,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
         self.process_events(guard, true);
     }
 
-    pub fn flush_batch(&self) {
+    fn flush_batch(&self) {
         let guard = self.inner.try_lock().unwrap();
         self.flush_batch_within_lock(guard);
     }

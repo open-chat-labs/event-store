@@ -9,6 +9,11 @@ edition = "2021"
 ic_principal.workspace = true
 event_sink_canister.path = "../canister/api"
 serde.workspace = true
+serde_json.workspace = true
+serde_json.optional = true
 
 [dev-dependencies]
 test-case.workspace = true
+
+[features]
+json = ["serde_json"]
