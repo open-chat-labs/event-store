@@ -417,3 +417,15 @@ impl Runtime for NullRuntime {
         0
     }
 }
+
+impl From<IdempotentEvent> for Event {
+    fn from(value: IdempotentEvent) -> Self {
+        Event {
+            name: value.name,
+            timestamp: value.timestamp,
+            user: value.user,
+            source: value.source,
+            payload: value.payload,
+        }
+    }
+}
