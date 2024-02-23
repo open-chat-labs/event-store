@@ -12,16 +12,6 @@ pub use updates::*;
 pub type TimestampMillis = u64;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
-pub struct Event {
-    pub name: String,
-    pub timestamp: TimestampMillis,
-    pub user: Option<String>,
-    pub source: Option<String>,
-    #[serde(with = "serde_bytes")]
-    pub payload: Vec<u8>,
-}
-
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct IdempotentEvent {
     pub idempotency_key: u128,
     pub name: String,

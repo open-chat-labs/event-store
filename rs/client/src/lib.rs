@@ -5,8 +5,6 @@ use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use std::{mem, thread};
 
-#[cfg(feature = "json")]
-pub mod json;
 #[cfg(test)]
 mod tests;
 
@@ -41,7 +39,13 @@ struct ClientInner<R> {
     total_events_flushed: u64,
 }
 
-pub use event_sink_canister::Event;
+pub struct Event {
+    pub name: String,
+    pub timestamp: TimestampMillis,
+    pub user: Option<String>,
+    pub source: Option<String>,
+    pub payload: Vec<u8>,
+}
 
 pub trait Runtime {
     fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, delay: Duration, callback: F);
@@ -126,11 +130,6 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
         self
     }
 
-    #[cfg(feature = "json")]
-    pub fn with_json_payloads(self) -> json::EventSinkClientBuilder<R> {
-        json::EventSinkClientBuilder::new(self)
-    }
-
     pub fn build(self) -> Client<R> {
         let flush_delay = self.flush_delay.unwrap_or(DEFAULT_FLUSH_DELAY);
         let max_batch_size = self.max_batch_size.unwrap_or(DEFAULT_MAX_BATCH_SIZE) as usize;
@@ -154,7 +153,7 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
 }
 
 impl<R: Runtime + Send + 'static> Client<R> {
-    pub fn push(&mut self, event: Event) {
+    pub fn push_event(&mut self, event: Event) {
         let mut guard = self.inner.try_lock().unwrap();
         let idempotency_key = guard.runtime.rng();
         guard.events.push(IdempotentEvent {
@@ -168,7 +167,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
         self.process_events(guard, true);
     }
 
-    pub fn push_many(&mut self, events: impl Iterator<Item = Event>) {
+    pub fn push_events(&mut self, events: impl Iterator<Item = Event>) {
         let mut guard = self.inner.try_lock().unwrap();
         for event in events {
             let idempotency_key = guard.runtime.rng();
@@ -274,6 +273,44 @@ impl<R: Runtime + Send + 'static> Client<R> {
         if !guard.events.is_empty() {
             self.process_events(guard, false);
         }
+    }
+}
+
+pub struct EventWithSerializablePayload<P: Serialize> {
+    pub name: String,
+    pub timestamp: TimestampMillis,
+    pub user: Option<String>,
+    pub source: Option<String>,
+    pub payload: P,
+}
+
+#[cfg(feature = "json")]
+impl<P: Serialize> EventWithSerializablePayload<P> {
+    fn to_json(self) -> Event {
+        Event {
+            name: self.name,
+            timestamp: self.timestamp,
+            user: self.user,
+            source: self.source,
+            payload: serde_json::to_vec(&self.payload).unwrap(),
+        }
+    }
+}
+
+#[cfg(feature = "json")]
+impl<R: Runtime + Send + 'static> Client<R> {
+    pub fn push_event_with_json_payload<P: Serialize>(
+        &mut self,
+        event: EventWithSerializablePayload<P>,
+    ) {
+        self.push_event(event.to_json())
+    }
+
+    pub fn push_events_with_json_payloads<P: Serialize>(
+        &mut self,
+        events: impl Iterator<Item = EventWithSerializablePayload<P>>,
+    ) {
+        self.push_events(events.into_iter().map(|e| e.to_json()))
     }
 }
 
