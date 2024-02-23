@@ -72,8 +72,18 @@ impl EventBuilder {
         self
     }
 
+    pub fn with_maybe_user(mut self, user: Option<impl Display>) -> Self {
+        self.user = user.map(|u| u.to_string());
+        self
+    }
+
     pub fn with_source(mut self, source: impl Display) -> Self {
         self.source = Some(source.to_string());
+        self
+    }
+
+    pub fn with_maybe_source(mut self, source: Option<impl Display>) -> Self {
+        self.source = source.map(|u| u.to_string());
         self
     }
 
