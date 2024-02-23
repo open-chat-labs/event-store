@@ -1,5 +1,5 @@
-use crate::{ClientBuilder, FlushOutcome, Runtime};
-use event_sink_canister::{Event, IdempotentEvent, TimestampMillis};
+use crate::{ClientBuilder, EventBuilder, FlushOutcome, Runtime};
+use event_sink_canister::{IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::thread;
@@ -16,13 +16,7 @@ fn batch_flushed_when_max_batch_size_reached(flush_synchronously: bool) {
 
     for i in 0..10 {
         for _ in 0..5 {
-            client.push(Event {
-                name: i.to_string(),
-                timestamp: 0,
-                user: None,
-                source: None,
-                payload: Vec::new(),
-            });
+            client.push(EventBuilder::new(i, 0).build());
         }
         thread::sleep(Duration::from_millis(10));
         assert_eq!(client.info().events_pending, 0);
@@ -41,13 +35,7 @@ fn batch_flushed_when_flush_delay_reached(flush_synchronously: bool) {
 
     for i in 0..10 {
         for _ in 0..5 {
-            client.push(Event {
-                name: i.to_string(),
-                timestamp: 0,
-                user: None,
-                source: None,
-                payload: Vec::new(),
-            })
+            client.push(EventBuilder::new(i, 0).build());
         }
         runtime.inner().timestamp += 4999;
         runtime.tick();
