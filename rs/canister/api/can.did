@@ -1,6 +1,5 @@
 type EventsArgs = record { start : nat64; length : nat64 };
 type EventsResponse = record {
-  latest_event_index_in_stable_memory : opt nat64;
   events : vec IndexedEvent;
   latest_event_index : opt nat64;
 };

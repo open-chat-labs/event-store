@@ -5,69 +5,32 @@ use ic_stable_structures::storable::Bound;
 use ic_stable_structures::{StableLog, Storable};
 use serde::Serialize;
 use std::borrow::Cow;
-use std::collections::VecDeque;
 
 #[derive(Serialize, Deserialize)]
 pub struct Events {
-    events: VecDeque<IndexedEvent>,
-    #[serde(skip, default = "init_events")]
-    events_v2: StableLog<StorableEvent, Memory, Memory>,
-    latest_event_index: Option<u64>,
+    #[serde(alias = "events_v2", skip, default = "init_events")]
+    events: StableLog<StorableEvent, Memory, Memory>,
 }
 
 impl Events {
     pub fn get(&self, start: u64, length: u64) -> Vec<IndexedEvent> {
-        let start_index = start as usize;
-        if start_index < self.events.len() {
-            self.events
-                .range(start_index..)
-                .take(length as usize)
-                .cloned()
-                .collect()
-        } else {
-            Vec::new()
-        }
-    }
-
-    pub fn migrate(&mut self, count: u64) {
-        for event in self.get(self.events_v2.len(), count) {
-            self.events_v2
-                .append(&StorableEvent {
-                    index: event.index,
-                    name: event.name,
-                    timestamp: event.timestamp,
-                    user: event.user,
-                    source: event.source,
-                    payload: event.payload,
-                })
-                .unwrap();
-        }
+        self.events
+            .iter()
+            .skip(start as usize)
+            .take(length as usize)
+            .map(|e| e.into())
+            .collect()
     }
 
     pub fn push(&mut self, event: IdempotentEvent) {
-        let index = self.latest_event_index.map_or(0, |i| i + 1);
-
-        if self.events_v2.len() == index {
-            self.events_v2
-                .append(&StorableEvent::new(event.clone(), index))
-                .unwrap();
-        }
-
-        self.events.push_back(IndexedEvent {
-            index,
-            name: event.name,
-            timestamp: event.timestamp,
-            user: event.user,
-            source: event.source,
-            payload: event.payload,
-        });
-        self.latest_event_index = Some(index);
+        self.events
+            .append(&StorableEvent::new(event.clone(), self.events.len()))
+            .unwrap();
     }
 
     pub fn stats(&self) -> EventsStats {
         EventsStats {
-            latest_event_index: self.latest_event_index,
-            latest_event_index_in_stable_memory: self.events_v2.iter().last().map(|e| e.index),
+            latest_event_index: self.events.iter().last().map(|e| e.index),
         }
     }
 }
@@ -75,9 +38,7 @@ impl Events {
 impl Default for Events {
     fn default() -> Self {
         Events {
-            events: VecDeque::new(),
-            events_v2: init_events(),
-            latest_event_index: None,
+            events: init_events(),
         }
     }
 }
@@ -88,7 +49,6 @@ fn init_events() -> StableLog<StorableEvent, Memory, Memory> {
 
 pub struct EventsStats {
     pub latest_event_index: Option<u64>,
-    pub latest_event_index_in_stable_memory: Option<u64>,
 }
 
 #[derive(Serialize, Deserialize)]
