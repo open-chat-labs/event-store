@@ -1,12 +1,6 @@
 export type EventsResponse = {
   events: Event[];
   latestEventIndex: bigint | undefined;
-  earliestEventIndexStored: bigint | undefined;
-};
-
-export type RemoveEventsResponse = {
-  latestEventIndex: bigint | undefined;
-  earliestEventIndexStored: bigint | undefined;
 };
 
 export type Event = {

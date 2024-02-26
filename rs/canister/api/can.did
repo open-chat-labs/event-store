@@ -2,7 +2,6 @@ type EventsArgs = record { start : nat64; length : nat64 };
 type EventsResponse = record {
   events : vec IndexedEvent;
   latest_event_index : opt nat64;
-  earliest_event_index_stored : opt nat64;
 };
 type IdempotentEvent = record {
   source : opt text;
@@ -21,24 +20,16 @@ type IndexedEvent = record {
   payload : vec nat8;
 };
 type InitArgs = record {
-  remove_events_whitelist : vec principal;
   push_events_whitelist : vec principal;
   read_events_whitelist : vec principal;
 };
 type PushEventsArgs = record { events : vec IdempotentEvent };
-type RemoveEventsArgs = record { up_to_inclusive : nat64 };
-type RemoveEventsResponse = record {
-  latest_event_index : opt nat64;
-  earliest_event_index_stored : opt nat64;
-};
 type WhitelistedPrincipals = record {
-  remove : vec principal;
   push : vec principal;
   read : vec principal;
 };
 service : (InitArgs) -> {
   events : (EventsArgs) -> (EventsResponse) query;
   push_events : (PushEventsArgs) -> ();
-  remove_events : (RemoveEventsArgs) -> (RemoveEventsResponse);
   whitelisted_principals : () -> (WhitelistedPrincipals) query;
 }

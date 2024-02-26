@@ -3,8 +3,8 @@ import { Principal } from "@dfinity/principal";
 import { Secp256k1KeyIdentity } from "@dfinity/identity-secp256k1";
 import pemfile from "pem-file";
 import { EventSinkCanister, idlFactory } from "./candid/idl";
-import type { EventsResponse, RemoveEventsResponse } from "./types";
-import { candidEventsResponse, candidRemoveEventsResponse } from "./mappers";
+import type { EventsResponse } from "./types";
+import { candidEventsResponse } from "./mappers";
 
 export class Client {
   private readonly canister: EventSinkCanister;
@@ -32,14 +32,5 @@ export class Client {
       length,
     });
     return candidEventsResponse(candid);
-  }
-
-  public async removeEvents(
-    upToInclusive: bigint,
-  ): Promise<RemoveEventsResponse> {
-    const candid = await this.canister.remove_events({
-      up_to_inclusive: upToInclusive,
-    });
-    return candidRemoveEventsResponse(candid);
   }
 }

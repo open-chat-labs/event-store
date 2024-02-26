@@ -1,9 +1,8 @@
 import {
   CandidEvent,
   CandidEventsResponse,
-  CandidRemoveEventsResponse,
 } from "./candid/idl";
-import type { Event, EventsResponse, RemoveEventsResponse } from "./types";
+import type { Event, EventsResponse } from "./types";
 
 export function candidEventsResponse(
   candid: CandidEventsResponse,
@@ -11,16 +10,6 @@ export function candidEventsResponse(
   return {
     events: candid.events.map(candidEvent),
     latestEventIndex: candid.latest_event_index[0],
-    earliestEventIndexStored: candid.earliest_event_index_stored[0],
-  };
-}
-
-export function candidRemoveEventsResponse(
-  candid: CandidRemoveEventsResponse,
-): RemoveEventsResponse {
-  return {
-    latestEventIndex: candid.latest_event_index[0],
-    earliestEventIndexStored: candid.earliest_event_index_stored[0],
   };
 }
 
