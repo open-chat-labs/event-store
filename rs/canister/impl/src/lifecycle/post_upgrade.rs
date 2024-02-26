@@ -1,5 +1,5 @@
 use crate::lifecycle::READER_WRITER_BUFFER_SIZE;
-use crate::memory::{get_upgrades_memory, reset_memory_manager};
+use crate::memory::get_upgrades_memory;
 use crate::state;
 use crate::state::State;
 use ic_cdk::post_upgrade;
@@ -13,6 +13,4 @@ fn post_upgrade() {
     let mut deserializer = rmp_serde::Deserializer::new(reader);
 
     state::init(State::deserialize(&mut deserializer).unwrap());
-
-    reset_memory_manager();
 }

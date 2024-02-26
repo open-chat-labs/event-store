@@ -514,6 +514,7 @@ dependencies = [
  "ic-stable-structures",
  "rmp-serde",
  "serde",
+ "serde_bytes",
 ]
 
 [[package]]

@@ -12,4 +12,5 @@ pub struct EventsArgs {
 pub struct EventsResponse {
     pub events: Vec<IndexedEvent>,
     pub latest_event_index: Option<u64>,
+    pub latest_event_index_in_stable_memory: Option<u64>,
 }
