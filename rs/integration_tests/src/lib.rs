@@ -63,6 +63,8 @@ fn read_push_remove_events_succeeds() {
     );
 
     assert_eq!(read_response.events.len(), 5);
+    assert_eq!(read_response.events.first().unwrap().index, 0);
+    assert_eq!(read_response.events.last().unwrap().index, 4);
     assert_eq!(read_response.latest_event_index, Some(9));
     assert_eq!(read_response.earliest_event_index_stored, Some(0));
 
@@ -109,8 +111,12 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
 fn canister_wasm() -> Vec<u8> {
     let file_path = canister_wasm_path();
 
-    let mut file = File::open(&file_path)
-        .unwrap_or_else(|_| panic!("Failed to open file: {}", file_path.to_str().unwrap()));
+    let mut file = File::open(&file_path).unwrap_or_else(|e| {
+        panic!(
+            "Failed to open file: {}. Error: {e:?}",
+            file_path.to_str().unwrap()
+        )
+    });
     let mut bytes = Vec::new();
     file.read_to_end(&mut bytes).expect("Failed to read file");
     bytes
@@ -121,6 +127,8 @@ fn canister_wasm_path() -> PathBuf {
         std::env::var("CARGO_MANIFEST_DIR")
             .expect("Failed to read CARGO_MANIFEST_DIR env variable"),
     )
+    .parent()
+    .unwrap()
     .parent()
     .unwrap()
     .join("target")
