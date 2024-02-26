@@ -74,4 +74,4 @@ jobs:
           override: true
       - run: rustup target add wasm32-unknown-unknown
       - name: Run integration tests
-        run: RUST_BACKTRACE=1 ./scripts/run-integration-tests.sh
+        run: ./scripts/run-integration-tests.sh
