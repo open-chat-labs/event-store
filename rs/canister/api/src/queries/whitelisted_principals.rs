@@ -5,5 +5,4 @@ use serde::Serialize;
 pub struct WhitelistedPrincipals {
     pub read: Vec<Principal>,
     pub push: Vec<Principal>,
-    pub remove: Vec<Principal>,
 }

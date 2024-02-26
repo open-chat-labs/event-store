@@ -2,9 +2,7 @@
 use crate::rng::{random, random_bytes, random_principal, random_string};
 use crate::setup::setup_new_env;
 use candid::Principal;
-use event_sink_canister::{
-    EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs, RemoveEventsArgs,
-};
+use event_sink_canister::{EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs};
 use pocket_ic::PocketIc;
 use std::fs::File;
 use std::io::Read;
@@ -20,17 +18,15 @@ pub struct TestEnv {
     pub controller: Principal,
     pub push_principals: Vec<Principal>,
     pub read_principals: Vec<Principal>,
-    pub remove_principals: Vec<Principal>,
 }
 
 #[test]
-fn read_push_remove_events_succeeds() {
+fn push_then_read_events_succeeds() {
     let TestEnv {
         mut env,
         canister_id,
         push_principals,
         read_principals,
-        remove_principals,
         ..
     } = install_canister(None);
 
@@ -66,17 +62,6 @@ fn read_push_remove_events_succeeds() {
     assert_eq!(read_response.events.first().unwrap().index, 0);
     assert_eq!(read_response.events.last().unwrap().index, 4);
     assert_eq!(read_response.latest_event_index, Some(9));
-    assert_eq!(read_response.earliest_event_index_stored, Some(0));
-
-    let remove_response = client::remove_events(
-        &mut env,
-        *remove_principals.first().unwrap(),
-        canister_id,
-        &RemoveEventsArgs { up_to_inclusive: 5 },
-    );
-
-    assert_eq!(remove_response.latest_event_index, Some(9));
-    assert_eq!(remove_response.earliest_event_index_stored, Some(6));
 }
 
 fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
@@ -86,7 +71,6 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
     let init_args = init_args.unwrap_or_else(|| InitArgs {
         push_events_whitelist: vec![random_principal()],
         read_events_whitelist: vec![random_principal()],
-        remove_events_whitelist: vec![random_principal()],
     });
 
     let canister_id = env.create_canister_with_settings(Some(controller), None);
@@ -104,7 +88,6 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
         controller,
         push_principals: init_args.push_events_whitelist,
         read_principals: init_args.read_events_whitelist,
-        remove_principals: init_args.remove_events_whitelist,
     }
 }
 

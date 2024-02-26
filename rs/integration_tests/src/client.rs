@@ -1,7 +1,5 @@
 use candid::{CandidType, Principal};
-use event_sink_canister::{
-    EventsArgs, EventsResponse, PushEventsArgs, RemoveEventsArgs, RemoveEventsResponse,
-};
+use event_sink_canister::{EventsArgs, EventsResponse, PushEventsArgs};
 use pocket_ic::{PocketIc, UserError, WasmResult};
 use serde::de::DeserializeOwned;
 
@@ -23,15 +21,6 @@ pub fn push_events(
     execute_update_no_response(env, sender, canister_id, "push_events", args)
 }
 
-pub fn remove_events(
-    env: &mut PocketIc,
-    sender: Principal,
-    canister_id: Principal,
-    args: &RemoveEventsArgs,
-) -> RemoveEventsResponse {
-    execute_update(env, sender, canister_id, "remove_events", args)
-}
-
 fn execute_query<P: CandidType, R: CandidType + DeserializeOwned>(
     env: &PocketIc,
     sender: Principal,
@@ -47,6 +36,7 @@ fn execute_query<P: CandidType, R: CandidType + DeserializeOwned>(
     ))
 }
 
+#[allow(dead_code)]
 fn execute_update<P: CandidType, R: CandidType + DeserializeOwned>(
     env: &mut PocketIc,
     sender: Principal,

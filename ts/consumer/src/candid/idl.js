@@ -1,6 +1,5 @@
 export const idlFactory = ({ IDL }) => {
   const InitArgs = IDL.Record({
-    'remove_events_whitelist' : IDL.Vec(IDL.Principal),
     'push_events_whitelist' : IDL.Vec(IDL.Principal),
     'read_events_whitelist' : IDL.Vec(IDL.Principal),
   });
@@ -16,7 +15,6 @@ export const idlFactory = ({ IDL }) => {
   const EventsResponse = IDL.Record({
     'events' : IDL.Vec(IndexedEvent),
     'latest_event_index' : IDL.Opt(IDL.Nat64),
-    'earliest_event_index_stored' : IDL.Opt(IDL.Nat64),
   });
   const IdempotentEvent = IDL.Record({
     'source' : IDL.Opt(IDL.Text),
@@ -27,20 +25,18 @@ export const idlFactory = ({ IDL }) => {
     'idempotency_key' : IDL.Nat,
   });
   const PushEventsArgs = IDL.Record({ 'events' : IDL.Vec(IdempotentEvent) });
-  const RemoveEventsArgs = IDL.Record({ 'up_to_inclusive' : IDL.Nat64 });
-  const RemoveEventsResponse = IDL.Record({
-    'latest_event_index' : IDL.Opt(IDL.Nat64),
-    'earliest_event_index_stored' : IDL.Opt(IDL.Nat64),
+  const WhitelistedPrincipals = IDL.Record({
+    'push' : IDL.Vec(IDL.Principal),
+    'read' : IDL.Vec(IDL.Principal),
   });
   return IDL.Service({
     'events' : IDL.Func([EventsArgs], [EventsResponse], ['query']),
     'push_events' : IDL.Func([PushEventsArgs], [], []),
-    'remove_events' : IDL.Func([RemoveEventsArgs], [RemoveEventsResponse], []),
+    'whitelisted_principals' : IDL.Func([], [WhitelistedPrincipals], ['query']),
   });
 };
 export const init = ({ IDL }) => {
   const InitArgs = IDL.Record({
-    'remove_events_whitelist' : IDL.Vec(IDL.Principal),
     'push_events_whitelist' : IDL.Vec(IDL.Principal),
     'read_events_whitelist' : IDL.Vec(IDL.Principal),
   });

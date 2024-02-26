@@ -15,7 +15,6 @@ thread_local! {
 pub struct State {
     push_events_whitelist: HashSet<Principal>,
     read_events_whitelist: HashSet<Principal>,
-    remove_events_whitelist: HashSet<Principal>,
     pub events: Events,
     pub event_deduper: EventDeduper,
 }
@@ -49,12 +48,10 @@ impl State {
     pub fn new(
         push_events_whitelist: HashSet<Principal>,
         read_events_whitelist: HashSet<Principal>,
-        remove_events_whitelist: HashSet<Principal>,
     ) -> State {
         State {
             push_events_whitelist,
             read_events_whitelist,
-            remove_events_whitelist,
             events: Events::default(),
             event_deduper: EventDeduper::default(),
         }
@@ -70,16 +67,10 @@ impl State {
         self.read_events_whitelist.contains(&caller)
     }
 
-    pub fn can_caller_remove_events(&self) -> bool {
-        let caller = env::caller();
-        self.remove_events_whitelist.contains(&caller)
-    }
-
     pub fn whitelisted_principals(&self) -> WhitelistedPrincipals {
         WhitelistedPrincipals {
             push: self.push_events_whitelist.iter().copied().collect(),
             read: self.read_events_whitelist.iter().copied().collect(),
-            remove: self.remove_events_whitelist.iter().copied().collect(),
         }
     }
 }

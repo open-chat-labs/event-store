@@ -5,5 +5,4 @@ use serde::Serialize;
 pub struct InitArgs {
     pub push_events_whitelist: Vec<Principal>,
     pub read_events_whitelist: Vec<Principal>,
-    pub remove_events_whitelist: Vec<Principal>,
 }
