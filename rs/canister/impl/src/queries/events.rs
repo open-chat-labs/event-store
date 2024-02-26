@@ -12,7 +12,6 @@ fn events(args: EventsArgs) -> EventsResponse {
         EventsResponse {
             events,
             latest_event_index: stats.latest_event_index,
-            latest_event_index_in_stable_memory: stats.latest_event_index_in_stable_memory,
         }
     })
 }
