@@ -8,7 +8,7 @@ use std::borrow::Cow;
 
 #[derive(Serialize, Deserialize)]
 pub struct Events {
-    #[serde(alias = "events_v2", skip, default = "init_events")]
+    #[serde(skip, default = "init_events")]
     events: StableLog<StorableEvent, Memory, Memory>,
 }
 
