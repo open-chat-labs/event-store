@@ -30,7 +30,7 @@ impl Events {
 
     pub fn stats(&self) -> EventsStats {
         EventsStats {
-            latest_event_index: self.events.iter().last().map(|e| e.index),
+            latest_event_index: self.events.len().checked_sub(1),
         }
     }
 }
