@@ -150,7 +150,6 @@ pub struct EventSinkClientBuilder<R> {
     runtime: R,
     flush_delay: Option<Duration>,
     max_batch_size: Option<u32>,
-    events: Vec<IdempotentEvent>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -171,7 +170,6 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
             runtime,
             flush_delay: None,
             max_batch_size: None,
-            events: Vec::new(),
         }
     }
 
@@ -185,30 +183,18 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
         self
     }
 
-    pub fn with_events(mut self, events: Vec<IdempotentEvent>) -> Self {
-        self.events = events;
-        self
-    }
-
     pub fn build(self) -> Client<R> {
         let flush_delay = self.flush_delay.unwrap_or(DEFAULT_FLUSH_DELAY);
         let max_batch_size = self.max_batch_size.unwrap_or(DEFAULT_MAX_BATCH_SIZE) as usize;
-        let any_events = !self.events.is_empty();
 
-        let client = Client {
+        Client {
             inner: Arc::new(Mutex::new(ClientInner::new(
                 self.event_sink_canister_id,
                 self.runtime,
                 flush_delay,
                 max_batch_size,
-                self.events,
             ))),
-        };
-        if any_events {
-            let guard = client.inner.try_lock().unwrap();
-            client.process_events(guard, false);
         }
-        client
     }
 }
 
@@ -227,7 +213,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
         self.process_events(guard, true);
     }
 
-    pub fn push_many(&mut self, events: impl Iterator<Item = Event>) {
+    pub fn push_many(&mut self, events: impl Iterator<Item = Event>, can_flush_immediately: bool) {
         let mut guard = self.inner.try_lock().unwrap();
         for event in events {
             let idempotency_key = guard.runtime.rng();
@@ -240,7 +226,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
                 payload: event.payload,
             });
         }
-        self.process_events(guard, true);
+        self.process_events(guard, can_flush_immediately);
     }
 
     fn flush_batch(&self) {
@@ -350,14 +336,13 @@ impl<R> ClientInner<R> {
         runtime: R,
         flush_delay: Duration,
         max_batch_size: usize,
-        events: Vec<IdempotentEvent>,
     ) -> ClientInner<R> {
         ClientInner {
             event_sink_canister_id,
             runtime,
             flush_delay,
             max_batch_size,
-            events,
+            events: Vec::new(),
             next_flush_scheduled: None,
             flush_in_progress: false,
             total_events_flushed: 0,
