@@ -8,7 +8,7 @@ use std::borrow::Cow;
 
 #[derive(Serialize, Deserialize)]
 pub struct Events {
-    #[serde(alias = "events_v2", skip, default = "init_events")]
+    #[serde(skip, default = "init_events")]
     events: StableLog<StorableEvent, Memory, Memory>,
 }
 
@@ -30,7 +30,7 @@ impl Events {
 
     pub fn stats(&self) -> EventsStats {
         EventsStats {
-            latest_event_index: self.events.iter().last().map(|e| e.index),
+            latest_event_index: self.events.len().checked_sub(1),
         }
     }
 }
