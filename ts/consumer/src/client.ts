@@ -2,12 +2,12 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { Secp256k1KeyIdentity } from "@dfinity/identity-secp256k1";
 import pemfile from "pem-file";
-import { EventSinkCanister, idlFactory } from "./candid/idl";
+import { EventStoreCanister, idlFactory } from "./candid/idl";
 import type { EventsResponse } from "./types";
 import { candidEventsResponse } from "./mappers";
 
 export class Client {
-  private readonly canister: EventSinkCanister;
+  private readonly canister: EventStoreCanister;
 
   public constructor(canisterId: string | Principal, agent: HttpAgent) {
     this.canister = Actor.createActor(idlFactory, {

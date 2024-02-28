@@ -1,5 +1,5 @@
 [package]
-name = "event_sink_client_agent_runtime"
+name = "event_store_client_agent_runtime"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,8 +7,8 @@ edition = "2021"
 
 [dependencies]
 candid.workspace = true
-event_sink_canister.path = "../../canister/api"
-event_sink_client.path = ".."
+event_store_canister.path = "../../canister/api"
+event_store_client.path = ".."
 ic-agent.workspace = true
 ic_principal.workspace = true
 rand.workspace = true

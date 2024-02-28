@@ -1,5 +1,5 @@
 use crate::state;
-use event_sink_canister::WhitelistedPrincipals;
+use event_store_canister::WhitelistedPrincipals;
 use ic_cdk::query;
 
 #[query]

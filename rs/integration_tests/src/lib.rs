@@ -2,7 +2,7 @@
 use crate::rng::{random, random_bytes, random_principal, random_string};
 use crate::setup::setup_new_env;
 use candid::Principal;
-use event_sink_canister::{EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs};
+use event_store_canister::{EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs};
 use pocket_ic::PocketIc;
 use std::fs::File;
 use std::io::Read;
@@ -117,5 +117,5 @@ fn canister_wasm_path() -> PathBuf {
     .join("target")
     .join("wasm32-unknown-unknown")
     .join("release")
-    .join("event_sink_canister_impl.wasm")
+    .join("event_store_canister_impl.wasm")
 }

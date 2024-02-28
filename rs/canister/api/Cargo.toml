@@ -1,5 +1,5 @@
 [package]
-name = "event_sink_canister"
+name = "event_store_canister"
 version = "0.1.0"
 edition = "2021"
 

@@ -7,7 +7,7 @@ edition = "2021"
 
 [dev-dependencies]
 candid.workspace = true
-event_sink_canister.path = "../canister/api"
+event_store_canister.path = "../canister/api"
 pocket-ic.workspace = true
 rand.workspace = true
 serde.workspace = true

@@ -1,4 +1,4 @@
-use event_sink_canister::{IdempotentEvent, TimestampMillis};
+use event_store_canister::{IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -17,16 +17,16 @@ pub const FLUSH_OUTCOME_SUCCESS: u8 = 0;
 pub const FLUSH_OUTCOME_FAILED_SHOULD_RETRY: u8 = 1;
 pub const FLUSH_OUTCOME_FAILED_SHOULDNT_RETRY: u8 = 2;
 
-pub struct EventSinkClient<R> {
+pub struct EventStoreClient<R> {
     inner: Arc<Mutex<ClientInner<R>>>,
 }
 
-type Client<R> = EventSinkClient<R>;
-type ClientBuilder<R> = EventSinkClientBuilder<R>;
+type Client<R> = EventStoreClient<R>;
+type ClientBuilder<R> = EventStoreClientBuilder<R>;
 
 #[derive(Serialize, Deserialize)]
 struct ClientInner<R> {
-    event_sink_canister_id: Principal,
+    event_store_canister_id: Principal,
     runtime: R,
     flush_delay: Duration,
     max_batch_size: usize,
@@ -124,11 +124,11 @@ impl<R> Client<R> {
         mem::take(&mut self.inner.try_lock().unwrap().events)
     }
 
-    pub fn info(&self) -> EventSinkClientInfo {
+    pub fn info(&self) -> EventStoreClientInfo {
         let guard = self.inner.try_lock().unwrap();
 
-        EventSinkClientInfo {
-            event_sink_canister_id: guard.event_sink_canister_id,
+        EventStoreClientInfo {
+            event_store_canister_id: guard.event_store_canister_id,
             flush_delay: guard.flush_delay,
             max_batch_size: guard.max_batch_size as u32,
             events_pending: guard.events.len() as u32,
@@ -145,16 +145,16 @@ impl Client<NullRuntime> {
     }
 }
 
-pub struct EventSinkClientBuilder<R> {
-    event_sink_canister_id: Principal,
+pub struct EventStoreClientBuilder<R> {
+    event_store_canister_id: Principal,
     runtime: R,
     flush_delay: Option<Duration>,
     max_batch_size: Option<u32>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct EventSinkClientInfo {
-    pub event_sink_canister_id: Principal,
+pub struct EventStoreClientInfo {
+    pub event_store_canister_id: Principal,
     pub flush_delay: Duration,
     pub max_batch_size: u32,
     pub events_pending: u32,
@@ -164,9 +164,9 @@ pub struct EventSinkClientInfo {
 }
 
 impl<R: Runtime + Send + 'static> ClientBuilder<R> {
-    pub fn new(event_sink_canister_id: Principal, runtime: R) -> ClientBuilder<R> {
+    pub fn new(event_store_canister_id: Principal, runtime: R) -> ClientBuilder<R> {
         ClientBuilder {
-            event_sink_canister_id,
+            event_store_canister_id,
             runtime,
             flush_delay: None,
             max_batch_size: None,
@@ -189,7 +189,7 @@ impl<R: Runtime + Send + 'static> ClientBuilder<R> {
 
         Client {
             inner: Arc::new(Mutex::new(ClientInner::new(
-                self.event_sink_canister_id,
+                self.event_store_canister_id,
                 self.runtime,
                 flush_delay,
                 max_batch_size,
@@ -249,10 +249,10 @@ impl<R: Runtime + Send + 'static> Client<R> {
             };
 
             let mut clone = self.clone();
-            let event_sink_canister_id = guard.event_sink_canister_id;
+            let event_store_canister_id = guard.event_store_canister_id;
             guard
                 .runtime
-                .flush(event_sink_canister_id, events.clone(), move |outcome| {
+                .flush(event_store_canister_id, events.clone(), move |outcome| {
                     clone.on_flush_complete(outcome, events)
                 });
         }
@@ -332,13 +332,13 @@ impl<R> Clone for Client<R> {
 
 impl<R> ClientInner<R> {
     pub fn new(
-        event_sink_canister_id: Principal,
+        event_store_canister_id: Principal,
         runtime: R,
         flush_delay: Duration,
         max_batch_size: usize,
     ) -> ClientInner<R> {
         ClientInner {
-            event_sink_canister_id,
+            event_store_canister_id,
             runtime,
             flush_delay,
             max_batch_size,

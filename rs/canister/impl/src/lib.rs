@@ -9,7 +9,7 @@ mod updates;
 
 #[cfg(test)]
 mod generate_candid_file {
-    use event_sink_canister::*;
+    use event_store_canister::*;
     use ic_cdk::export_candid;
     use std::env;
     use std::fs::write;

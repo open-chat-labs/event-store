@@ -495,7 +495,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_sink_canister"
+name = "event_store_canister"
 version = "0.1.0"
 dependencies = [
  "candid",
@@ -504,12 +504,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_sink_canister_impl"
+name = "event_store_canister_impl"
 version = "0.1.0"
 dependencies = [
  "candid",
- "event_sink_canister",
- "event_sink_utils",
+ "event_store_canister",
+ "event_store_utils",
  "ic-cdk",
  "ic-stable-structures",
  "rmp-serde",
@@ -518,10 +518,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_sink_client"
+name = "event_store_client"
 version = "0.1.0"
 dependencies = [
- "event_sink_canister",
+ "event_store_canister",
  "ic_principal",
  "serde",
  "serde_json",
@@ -529,12 +529,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_sink_client_agent_runtime"
+name = "event_store_client_agent_runtime"
 version = "0.1.0"
 dependencies = [
  "candid",
- "event_sink_canister",
- "event_sink_client",
+ "event_store_canister",
+ "event_store_client",
  "ic-agent",
  "ic_principal",
  "rand",
@@ -543,11 +543,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_sink_client_cdk_runtime"
+name = "event_store_client_cdk_runtime"
 version = "0.1.0"
 dependencies = [
- "event_sink_canister",
- "event_sink_client",
+ "event_store_canister",
+ "event_store_client",
  "ic-cdk",
  "ic-cdk-timers",
  "ic_principal",
@@ -557,7 +557,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_sink_utils"
+name = "event_store_utils"
 version = "0.1.0"
 dependencies = [
  "serde",
@@ -1083,7 +1083,7 @@ name = "integration_tests"
 version = "0.1.0"
 dependencies = [
  "candid",
- "event_sink_canister",
+ "event_store_canister",
  "pocket-ic",
  "rand",
  "serde",

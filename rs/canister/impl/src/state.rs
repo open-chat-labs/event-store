@@ -1,8 +1,8 @@
 use crate::env;
 use crate::model::events::Events;
 use candid::Principal;
-use event_sink_canister::WhitelistedPrincipals;
-use event_sink_utils::EventDeduper;
+use event_store_canister::WhitelistedPrincipals;
+use event_store_utils::EventDeduper;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::HashSet;
