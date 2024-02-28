@@ -155,12 +155,7 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
         Some(controller),
     );
 
-    env.tick();
-    env.tick();
-    env.tick();
-    env.tick();
-    env.tick();
-    env.tick();
+    // Tick twice to initialize the `salt`
     env.tick();
     env.tick();
 
