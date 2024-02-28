@@ -71,6 +71,7 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
     let init_args = init_args.unwrap_or_else(|| InitArgs {
         push_events_whitelist: vec![random_principal()],
         read_events_whitelist: vec![random_principal()],
+        anonymization_config: None,
     });
 
     let canister_id = env.create_canister_with_settings(Some(controller), None);

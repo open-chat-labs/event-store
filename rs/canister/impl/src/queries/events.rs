@@ -6,8 +6,8 @@ use ic_cdk::query;
 #[query(guard = "caller_can_read_events")]
 fn events(args: EventsArgs) -> EventsResponse {
     state::read(|s| {
-        let events = s.events.get(args.start, args.length);
-        let stats = s.events.stats();
+        let events = s.events().get(args.start, args.length);
+        let stats = s.events().stats();
 
         EventsResponse {
             events,
