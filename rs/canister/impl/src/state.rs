@@ -124,7 +124,7 @@ impl State {
         // Generates a 32 character string from the input value + the salt
         let mut hasher = sha2::Sha256::new();
         hasher.update(value.as_bytes());
-        hasher.update(&self.salt.get());
+        hasher.update(self.salt.get());
         let hash: [u8; 32] = hasher.finalize().into();
 
         let mut string = String::with_capacity(32);
