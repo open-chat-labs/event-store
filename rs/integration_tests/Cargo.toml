@@ -11,3 +11,4 @@ event_store_canister.path = "../canister/api"
 pocket-ic.workspace = true
 rand.workspace = true
 serde.workspace = true
+test-case.workspace = true
