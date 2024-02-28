@@ -20,7 +20,7 @@ else
 fi
 
 echo "Building canister wasm"
-cargo build --target wasm32-unknown-unknown --release -p event_sink_canister_impl --locked
+cargo build --target wasm32-unknown-unknown --release -p event_store_canister_impl --locked
 
 cd rs/integration_tests
 echo "PocketIC download starting"

@@ -1,5 +1,5 @@
 [package]
-name = "event_sink_client"
+name = "event_store_client"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 ic_principal.workspace = true
-event_sink_canister.path = "../canister/api"
+event_store_canister.path = "../canister/api"
 serde.workspace = true
 serde_json.workspace = true
 serde_json.optional = true

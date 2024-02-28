@@ -1,6 +1,6 @@
 use crate::guards::caller_can_push_events;
 use crate::{env, state};
-use event_sink_canister::PushEventsArgs;
+use event_store_canister::PushEventsArgs;
 use ic_cdk::update;
 
 #[update(guard = "caller_can_push_events")]

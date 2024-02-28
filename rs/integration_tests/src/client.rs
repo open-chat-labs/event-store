@@ -1,5 +1,5 @@
 use candid::{CandidType, Principal};
-use event_sink_canister::{EventsArgs, EventsResponse, PushEventsArgs};
+use event_store_canister::{EventsArgs, EventsResponse, PushEventsArgs};
 use pocket_ic::{PocketIc, UserError, WasmResult};
 use serde::de::DeserializeOwned;
 

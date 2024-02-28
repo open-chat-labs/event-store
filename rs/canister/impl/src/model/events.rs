@@ -1,6 +1,6 @@
 use crate::memory::{get_events_data_memory, get_events_index_memory, Memory};
 use candid::Deserialize;
-use event_sink_canister::{IdempotentEvent, IndexedEvent, TimestampMillis};
+use event_store_canister::{IdempotentEvent, IndexedEvent, TimestampMillis};
 use ic_stable_structures::storable::Bound;
 use ic_stable_structures::{StableLog, Storable};
 use serde::Serialize;

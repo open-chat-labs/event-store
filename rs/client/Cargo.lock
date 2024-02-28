@@ -163,7 +163,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
-name = "event_sink_canister"
+name = "event_store_canister"
 version = "0.1.0"
 dependencies = [
  "candid",
@@ -172,10 +172,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_sink_client"
+name = "event_store_client"
 version = "0.1.0"
 dependencies = [
- "event_sink_canister",
+ "event_store_canister",
 ]
 
 [[package]]

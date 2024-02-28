@@ -1,13 +1,13 @@
 [package]
-name = "event_sink_client_cdk_runtime"
+name = "event_store_client_cdk_runtime"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-event_sink_canister.path = "../../canister/api"
-event_sink_client.path = ".."
+event_store_canister.path = "../../canister/api"
+event_store_client.path = ".."
 ic-cdk.workspace = true
 ic-cdk-timers.workspace = true
 ic_principal.workspace = true

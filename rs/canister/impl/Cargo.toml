@@ -1,5 +1,5 @@
 [package]
-name = "event_sink_canister_impl"
+name = "event_store_canister_impl"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,8 +11,8 @@ crate-type = ["cdylib"]
 
 [dependencies]
 candid.workspace = true
-event_sink_canister.path = "../api"
-event_sink_utils.path = "../../utils"
+event_store_canister.path = "../api"
+event_store_utils.path = "../../utils"
 ic-cdk.workspace = true
 ic-stable-structures.workspace = true
 rmp-serde.workspace = true

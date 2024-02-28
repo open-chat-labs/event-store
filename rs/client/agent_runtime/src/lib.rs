@@ -1,5 +1,5 @@
-use event_sink_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
-use event_sink_client::{
+use event_store_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
+use event_store_client::{
     FlushOutcome, Runtime, FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS,
 };
 use ic_agent::Agent;
