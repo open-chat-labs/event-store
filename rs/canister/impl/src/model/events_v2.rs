@@ -1,4 +1,4 @@
-use crate::memory::{get_events_data_memory, get_events_index_memory, Memory};
+use crate::memory::{get_events_v2_data_memory, get_events_v2_index_memory, Memory};
 use crate::model::string_to_num_map::StringToNumMap;
 use candid::Deserialize;
 use event_store_canister::{IdempotentEvent, IndexedEvent, TimestampMillis};
@@ -83,7 +83,7 @@ impl Default for EventsV2 {
 }
 
 fn init_events() -> StableLog<StorableEvent, Memory, Memory> {
-    StableLog::init(get_events_index_memory(), get_events_data_memory()).unwrap()
+    StableLog::init(get_events_v2_index_memory(), get_events_v2_data_memory()).unwrap()
 }
 
 pub struct EventsStats {
