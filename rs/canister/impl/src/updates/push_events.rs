@@ -9,9 +9,7 @@ fn push_events(args: PushEventsArgs) {
 
     state::mutate(|s| {
         for event in args.events {
-            if s.event_deduper.try_push(event.idempotency_key, now) {
-                s.events.push(event);
-            }
+            s.push_event(event, now);
         }
     });
 }

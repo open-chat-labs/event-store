@@ -2,11 +2,14 @@
 use crate::rng::{random, random_bytes, random_principal, random_string};
 use crate::setup::setup_new_env;
 use candid::Principal;
-use event_store_canister::{EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs};
+use event_store_canister::{
+    AnonymizationInitConfig, EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs,
+};
 use pocket_ic::PocketIc;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
+use test_case::test_case;
 
 mod client;
 mod rng;
@@ -64,6 +67,75 @@ fn push_then_read_events_succeeds() {
     assert_eq!(read_response.latest_event_index, Some(9));
 }
 
+#[test_case(true, true)]
+#[test_case(false, true)]
+#[test_case(true, false)]
+#[test_case(false, false)]
+fn users_and_source_can_be_anonymized(users: bool, sources: bool) {
+    let TestEnv {
+        mut env,
+        canister_id,
+        push_principals,
+        read_principals,
+        ..
+    } = install_canister(Some(InitArgs {
+        push_events_whitelist: vec![random_principal()],
+        read_events_whitelist: vec![random_principal()],
+        anonymization_config: Some(AnonymizationInitConfig {
+            users: Some(users),
+            sources: Some(sources),
+            exclusions: None,
+        }),
+    }));
+
+    let user = random_string();
+    let source = random_string();
+
+    client::push_events(
+        &mut env,
+        *push_principals.first().unwrap(),
+        canister_id,
+        &PushEventsArgs {
+            events: vec![IdempotentEvent {
+                idempotency_key: random(),
+                name: random_string(),
+                timestamp: 1000,
+                user: Some(user.clone()),
+                source: Some(source.clone()),
+                payload: Vec::new(),
+            }],
+        },
+    );
+
+    let event = client::events(
+        &env,
+        *read_principals.first().unwrap(),
+        canister_id,
+        &EventsArgs {
+            start: 0,
+            length: 1,
+        },
+    )
+    .events
+    .pop()
+    .unwrap();
+
+    let user_returned = event.user.unwrap();
+    let source_returned = event.source.unwrap();
+
+    if users {
+        assert_eq!(user_returned.len(), 32);
+    } else {
+        assert_eq!(user_returned, user);
+    }
+
+    if sources {
+        assert_eq!(source_returned.len(), 32);
+    } else {
+        assert_eq!(source_returned, source);
+    }
+}
+
 fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
     let env = setup_new_env();
     let controller = random_principal();
@@ -71,6 +143,7 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
     let init_args = init_args.unwrap_or_else(|| InitArgs {
         push_events_whitelist: vec![random_principal()],
         read_events_whitelist: vec![random_principal()],
+        anonymization_config: None,
     });
 
     let canister_id = env.create_canister_with_settings(Some(controller), None);
@@ -81,6 +154,10 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
         candid::encode_one(&init_args).unwrap(),
         Some(controller),
     );
+
+    // Tick twice to initialize the `salt`
+    env.tick();
+    env.tick();
 
     TestEnv {
         env,
