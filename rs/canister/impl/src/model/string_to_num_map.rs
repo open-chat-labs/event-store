@@ -14,7 +14,7 @@ pub struct StringToNumMap {
 }
 
 impl StringToNumMap {
-    pub fn to_num(&mut self, string: String) -> u32 {
+    pub fn convert_to_num(&mut self, string: String) -> u32 {
         if let Some(i) = self.string_to_num.get(&string) {
             i
         } else {
@@ -25,7 +25,7 @@ impl StringToNumMap {
         }
     }
 
-    pub fn to_string(&self, num: u32) -> Option<String> {
+    pub fn convert_to_string(&self, num: u32) -> Option<String> {
         self.num_to_string.get(num as u64)
     }
 }

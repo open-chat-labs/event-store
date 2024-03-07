@@ -26,7 +26,7 @@ impl EventsV2 {
     }
 
     pub fn push(&mut self, event: IdempotentEvent) {
-        let storable = self.to_storable(event, self.events.len());
+        let storable = self.convert_to_storable(event, self.events.len());
 
         self.events.append(&storable).unwrap();
     }
@@ -41,13 +41,15 @@ impl EventsV2 {
         self.events.len()
     }
 
-    fn to_storable(&mut self, event: IdempotentEvent, index: u64) -> StorableEvent {
+    fn convert_to_storable(&mut self, event: IdempotentEvent, index: u64) -> StorableEvent {
         StorableEvent {
             index,
-            name: self.string_to_num_map.to_num(event.name),
+            name: self.string_to_num_map.convert_to_num(event.name),
             timestamp: event.timestamp,
-            user: event.user.map(|u| self.string_to_num_map.to_num(u)),
-            source: event.source.map(|s| self.string_to_num_map.to_num(s)),
+            user: event.user.map(|u| self.string_to_num_map.convert_to_num(u)),
+            source: event
+                .source
+                .map(|s| self.string_to_num_map.convert_to_num(s)),
             payload: event.payload,
         }
     }
@@ -57,13 +59,15 @@ impl EventsV2 {
             index: event.index,
             name: self
                 .string_to_num_map
-                .to_string(event.name)
+                .convert_to_string(event.name)
                 .unwrap_or("unknown".to_string()),
             timestamp: event.timestamp,
-            user: event.user.and_then(|u| self.string_to_num_map.to_string(u)),
+            user: event
+                .user
+                .and_then(|u| self.string_to_num_map.convert_to_string(u)),
             source: event
                 .source
-                .and_then(|s| self.string_to_num_map.to_string(s)),
+                .and_then(|s| self.string_to_num_map.convert_to_string(s)),
             payload: event.payload,
         }
     }
