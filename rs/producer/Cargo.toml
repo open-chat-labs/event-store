@@ -1,5 +1,5 @@
 [package]
-name = "event_store_client"
+name = "event_store_producer"
 version = "0.1.0"
 edition = "2021"
 
