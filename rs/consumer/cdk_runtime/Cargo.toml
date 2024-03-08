@@ -1,0 +1,13 @@
+[package]
+name = "event_store_consumer_cdk_runtime"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+event_store_canister.path = "../../canister/api"
+event_store_consumer.path = ".."
+ic-cdk.workspace = true
+ic_principal.workspace = true
+serde.workspace = true

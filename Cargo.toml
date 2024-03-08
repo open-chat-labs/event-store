@@ -2,6 +2,9 @@
 members = [
     "rs/canister/api",
     "rs/canister/impl",
+    "rs/consumer",
+    "rs/consumer/agent_runtime",
+    "rs/consumer/cdk_runtime",
     "rs/producer",
     "rs/producer/agent_runtime",
     "rs/producer/cdk_runtime",

@@ -520,6 +520,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "event_store_consumer"
+version = "0.1.0"
+dependencies = [
+ "event_store_canister",
+ "ic_principal",
+]
+
+[[package]]
+name = "event_store_consumer_agent_runtime"
+version = "0.1.0"
+dependencies = [
+ "candid",
+ "event_store_canister",
+ "event_store_consumer",
+ "ic-agent",
+ "ic_principal",
+]
+
+[[package]]
+name = "event_store_consumer_cdk_runtime"
+version = "0.1.0"
+dependencies = [
+ "event_store_canister",
+ "event_store_consumer",
+ "ic-cdk",
+ "ic_principal",
+ "serde",
+]
+
+[[package]]
 name = "event_store_producer"
 version = "0.1.0"
 dependencies = [
