@@ -30,6 +30,7 @@ pub fn get_events_index_memory() -> Memory {
 pub fn get_events_data_memory() -> Memory {
     get_memory(EVENTS_DATA)
 }
+
 pub fn get_events_v2_index_memory() -> Memory {
     get_memory(EVENTS_V2_INDEX)
 }
@@ -42,12 +43,12 @@ pub fn get_string_to_num_map_memory() -> Memory {
     get_memory(STRING_TO_NUM_MAP)
 }
 
-pub fn get_num_to_string_data_memory() -> Memory {
-    get_memory(NUM_TO_STRING_DATA)
-}
-
 pub fn get_num_to_string_index_memory() -> Memory {
     get_memory(NUM_TO_STRING_INDEX)
+}
+
+pub fn get_num_to_string_data_memory() -> Memory {
+    get_memory(NUM_TO_STRING_DATA)
 }
 
 fn get_memory(id: MemoryId) -> Memory {
