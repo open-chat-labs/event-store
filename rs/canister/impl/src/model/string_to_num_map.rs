@@ -3,13 +3,9 @@ use crate::memory::{
     Memory,
 };
 use ic_stable_structures::{StableBTreeMap, StableLog};
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
 pub struct StringToNumMap {
-    #[serde(skip, default = "init_string_to_num")]
     string_to_num: StableBTreeMap<String, u32, Memory>,
-    #[serde(skip, default = "init_num_to_string")]
     num_to_string: StableLog<String, Memory, Memory>,
 }
 
