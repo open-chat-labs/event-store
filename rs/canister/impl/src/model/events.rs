@@ -1,4 +1,5 @@
 use crate::memory::{get_events_data_memory, get_events_index_memory, Memory};
+use crate::model::string_to_num_map::StringToNumMap;
 use candid::Deserialize;
 use event_store_canister::{IdempotentEvent, IndexedEvent, TimestampMillis};
 use ic_stable_structures::storable::Bound;
@@ -10,6 +11,7 @@ use std::borrow::Cow;
 pub struct Events {
     #[serde(skip, default = "init_events")]
     events: StableLog<StorableEvent, Memory, Memory>,
+    string_to_num_map: StringToNumMap,
 }
 
 impl Events {
@@ -18,19 +20,54 @@ impl Events {
             .iter()
             .skip(start as usize)
             .take(length as usize)
-            .map(|e| e.into())
+            .map(|e| self.hydrate(e))
             .collect()
     }
 
     pub fn push(&mut self, event: IdempotentEvent) {
-        self.events
-            .append(&StorableEvent::new(event.clone(), self.events.len()))
-            .unwrap();
+        let storable = self.convert_to_storable(event, self.events.len());
+
+        self.events.append(&storable).unwrap();
     }
 
     pub fn stats(&self) -> EventsStats {
         EventsStats {
             latest_event_index: self.events.len().checked_sub(1),
+        }
+    }
+
+    pub fn len(&self) -> u64 {
+        self.events.len()
+    }
+
+    fn convert_to_storable(&mut self, event: IdempotentEvent, index: u64) -> StorableEvent {
+        StorableEvent {
+            index,
+            name: self.string_to_num_map.convert_to_num(event.name),
+            timestamp: event.timestamp,
+            user: event.user.map(|u| self.string_to_num_map.convert_to_num(u)),
+            source: event
+                .source
+                .map(|s| self.string_to_num_map.convert_to_num(s)),
+            payload: event.payload,
+        }
+    }
+
+    fn hydrate(&self, event: StorableEvent) -> IndexedEvent {
+        IndexedEvent {
+            index: event.index,
+            name: self
+                .string_to_num_map
+                .convert_to_string(event.name)
+                .unwrap_or("unknown".to_string()),
+            timestamp: event.timestamp,
+            user: event
+                .user
+                .and_then(|u| self.string_to_num_map.convert_to_string(u)),
+            source: event
+                .source
+                .and_then(|s| self.string_to_num_map.convert_to_string(s)),
+            payload: event.payload,
         }
     }
 }
@@ -39,6 +76,7 @@ impl Default for Events {
     fn default() -> Self {
         Events {
             events: init_events(),
+            string_to_num_map: StringToNumMap::default(),
         }
     }
 }
@@ -56,13 +94,13 @@ struct StorableEvent {
     #[serde(rename = "i")]
     index: u64,
     #[serde(rename = "n")]
-    name: String,
+    name: u32,
     #[serde(rename = "t")]
     timestamp: TimestampMillis,
     #[serde(rename = "u", default, skip_serializing_if = "Option::is_none")]
-    user: Option<String>,
+    user: Option<u32>,
     #[serde(rename = "s", default, skip_serializing_if = "Option::is_none")]
-    source: Option<String>,
+    source: Option<u32>,
     #[serde(
         rename = "p",
         default,
@@ -70,32 +108,6 @@ struct StorableEvent {
         with = "serde_bytes"
     )]
     payload: Vec<u8>,
-}
-
-impl StorableEvent {
-    fn new(event: IdempotentEvent, index: u64) -> StorableEvent {
-        StorableEvent {
-            index,
-            name: event.name,
-            timestamp: event.timestamp,
-            user: event.user,
-            source: event.source,
-            payload: event.payload,
-        }
-    }
-}
-
-impl From<StorableEvent> for IndexedEvent {
-    fn from(value: StorableEvent) -> Self {
-        IndexedEvent {
-            index: value.index,
-            name: value.name,
-            timestamp: value.timestamp,
-            user: value.user,
-            source: value.source,
-            payload: value.payload,
-        }
-    }
 }
 
 impl Storable for StorableEvent {

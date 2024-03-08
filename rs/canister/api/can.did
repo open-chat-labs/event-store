@@ -5,10 +5,8 @@ type AnonymizationInitConfig = record {
 };
 type EventsArgs = record { start : nat64; length : nat64 };
 type EventsResponse = record {
-  latest_event_index_v2 : opt nat64;
   events : vec IndexedEvent;
   latest_event_index : opt nat64;
-  is_v2 : bool;
 };
 type IdempotentEvent = record {
   source : opt text;

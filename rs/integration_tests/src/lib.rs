@@ -64,8 +64,7 @@ fn push_then_read_events_succeeds() {
     assert_eq!(read_response.events.len(), 5);
     assert_eq!(read_response.events.first().unwrap().index, 0);
     assert_eq!(read_response.events.last().unwrap().index, 4);
-    assert_eq!(read_response.latest_event_index, None);
-    assert_eq!(read_response.latest_event_index_v2, Some(9));
+    assert_eq!(read_response.latest_event_index, Some(9));
 }
 
 #[test_case(true, true)]
