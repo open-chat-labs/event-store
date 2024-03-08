@@ -7,9 +7,7 @@ use ic_stable_structures::{StableLog, Storable};
 use serde::Serialize;
 use std::borrow::Cow;
 
-#[derive(Serialize, Deserialize)]
 pub struct Events {
-    #[serde(skip, default = "init_events")]
     events: StableLog<StorableEvent, Memory, Memory>,
     string_to_num_map: StringToNumMap,
 }

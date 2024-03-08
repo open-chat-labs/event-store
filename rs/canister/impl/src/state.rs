@@ -20,7 +20,8 @@ thread_local! {
 pub struct State {
     push_events_whitelist: HashSet<Principal>,
     read_events_whitelist: HashSet<Principal>,
-    events_v2: Events,
+    #[serde(skip)]
+    events: Events,
     event_deduper: EventDeduper,
     salt: Salt,
     anonymization_config: AnonymizationConfig,
@@ -60,7 +61,7 @@ impl State {
         State {
             push_events_whitelist,
             read_events_whitelist,
-            events_v2: Events::default(),
+            events: Events::default(),
             event_deduper: EventDeduper::default(),
             anonymization_config: anonymization_config.into(),
             salt: Salt::default(),
@@ -85,7 +86,7 @@ impl State {
     }
 
     pub fn events(&self) -> &Events {
-        &self.events_v2
+        &self.events
     }
 
     pub fn set_salt(&mut self, salt: [u8; 32]) {
@@ -117,12 +118,12 @@ impl State {
             }
         }
 
-        self.events_v2.push(event);
+        self.events.push(event);
     }
 
     pub fn migrate_events(&mut self, count: u32) {
-        for event in self.events_v2.get(self.events_v2.len(), count as u64) {
-            self.events_v2.push(IdempotentEvent {
+        for event in self.events.get(self.events.len(), count as u64) {
+            self.events.push(IdempotentEvent {
                 idempotency_key: 0,
                 name: event.name,
                 timestamp: event.timestamp,
