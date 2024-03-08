@@ -33,9 +33,7 @@ struct ClientInner<R> {
     events: Vec<IdempotentEvent>,
     #[serde(skip)]
     next_flush_scheduled: Option<TimestampMillis>,
-    #[serde(default)]
     flush_in_progress: bool,
-    #[serde(default)]
     total_events_flushed: u64,
 }
 

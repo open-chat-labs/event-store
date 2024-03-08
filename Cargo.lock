@@ -520,7 +520,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_store_client"
+name = "event_store_producer"
 version = "0.1.0"
 dependencies = [
  "event_store_canister",
@@ -531,12 +531,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_store_client_agent_runtime"
+name = "event_store_producer_agent_runtime"
 version = "0.1.0"
 dependencies = [
  "candid",
  "event_store_canister",
- "event_store_client",
+ "event_store_producer",
  "ic-agent",
  "ic_principal",
  "rand",
@@ -545,11 +545,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "event_store_client_cdk_runtime"
+name = "event_store_producer_cdk_runtime"
 version = "0.1.0"
 dependencies = [
  "event_store_canister",
- "event_store_client",
+ "event_store_producer",
  "ic-cdk",
  "ic-cdk-timers",
  "ic_principal",

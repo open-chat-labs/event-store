@@ -1,17 +1,16 @@
 [package]
-name = "event_store_client_agent_runtime"
+name = "event_store_producer_cdk_runtime"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-candid.workspace = true
 event_store_canister.path = "../../canister/api"
-event_store_client.path = ".."
-ic-agent.workspace = true
+event_store_producer.path = ".."
+ic-cdk.workspace = true
+ic-cdk-timers.workspace = true
 ic_principal.workspace = true
 rand.workspace = true
-tokio.workspace = true
-tokio.features = ["full"]
-tokio-util.workspace = true
+serde.workspace = true
+tracing.workspace = true
