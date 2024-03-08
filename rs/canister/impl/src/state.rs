@@ -1,6 +1,5 @@
 use crate::env;
 use crate::model::events::Events;
-use crate::model::events_v2::EventsV2;
 use crate::model::salt::Salt;
 use candid::Principal;
 use event_store_canister::{
@@ -21,9 +20,7 @@ thread_local! {
 pub struct State {
     push_events_whitelist: HashSet<Principal>,
     read_events_whitelist: HashSet<Principal>,
-    events: Events,
-    #[serde(default)]
-    events_v2: EventsV2,
+    events_v2: Events,
     event_deduper: EventDeduper,
     salt: Salt,
     anonymization_config: AnonymizationConfig,
@@ -63,8 +60,7 @@ impl State {
         State {
             push_events_whitelist,
             read_events_whitelist,
-            events: Events::default(),
-            events_v2: EventsV2::default(),
+            events_v2: Events::default(),
             event_deduper: EventDeduper::default(),
             anonymization_config: anonymization_config.into(),
             salt: Salt::default(),
@@ -89,10 +85,6 @@ impl State {
     }
 
     pub fn events(&self) -> &Events {
-        &self.events
-    }
-
-    pub fn events_v2(&self) -> &EventsV2 {
         &self.events_v2
     }
 
@@ -125,15 +117,11 @@ impl State {
             }
         }
 
-        if self.events_v2.stats().latest_event_index >= self.events.stats().latest_event_index {
-            self.events_v2.push(event);
-        } else {
-            self.events.push(event);
-        }
+        self.events_v2.push(event);
     }
 
     pub fn migrate_events(&mut self, count: u32) {
-        for event in self.events.get(self.events_v2.len(), count as u64) {
+        for event in self.events_v2.get(self.events_v2.len(), count as u64) {
             self.events_v2.push(IdempotentEvent {
                 idempotency_key: 0,
                 name: event.name,
