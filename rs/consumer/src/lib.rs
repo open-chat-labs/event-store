@@ -16,9 +16,9 @@ impl<R> EventStoreClient<R> {
 }
 
 impl<R: Runtime> EventStoreClient<R> {
-    pub async fn events(&self, args: EventsArgs) -> Result<EventsResponse, (i32, String)> {
+    pub async fn events(&self, start: u64, length: u64) -> Result<EventsResponse, (i32, String)> {
         self.runtime
-            .events(self.event_store_canister_id, args)
+            .events(self.event_store_canister_id, EventsArgs { start, length })
             .await
     }
 }
