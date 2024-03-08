@@ -1,7 +1,14 @@
+type AnonymizationInitConfig = record {
+  users : opt bool;
+  exclusions : opt vec text;
+  sources : opt bool;
+};
 type EventsArgs = record { start : nat64; length : nat64 };
 type EventsResponse = record {
+  latest_event_index_v2 : opt nat64;
   events : vec IndexedEvent;
   latest_event_index : opt nat64;
+  is_v2 : bool;
 };
 type IdempotentEvent = record {
   source : opt text;
@@ -21,6 +28,7 @@ type IndexedEvent = record {
 };
 type InitArgs = record {
   push_events_whitelist : vec principal;
+  anonymization_config : opt AnonymizationInitConfig;
   read_events_whitelist : vec principal;
 };
 type PushEventsArgs = record { events : vec IdempotentEvent };

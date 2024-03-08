@@ -1,5 +1,6 @@
 use crate::env;
 use crate::model::events::Events;
+use crate::model::events_v2::EventsV2;
 use crate::model::salt::Salt;
 use candid::Principal;
 use event_store_canister::{
@@ -21,6 +22,8 @@ pub struct State {
     push_events_whitelist: HashSet<Principal>,
     read_events_whitelist: HashSet<Principal>,
     events: Events,
+    #[serde(default)]
+    events_v2: EventsV2,
     event_deduper: EventDeduper,
     salt: Salt,
     anonymization_config: AnonymizationConfig,
@@ -61,6 +64,7 @@ impl State {
             push_events_whitelist,
             read_events_whitelist,
             events: Events::default(),
+            events_v2: EventsV2::default(),
             event_deduper: EventDeduper::default(),
             anonymization_config: anonymization_config.into(),
             salt: Salt::default(),
@@ -86,6 +90,10 @@ impl State {
 
     pub fn events(&self) -> &Events {
         &self.events
+    }
+
+    pub fn events_v2(&self) -> &EventsV2 {
+        &self.events_v2
     }
 
     pub fn set_salt(&mut self, salt: [u8; 32]) {
@@ -117,7 +125,24 @@ impl State {
             }
         }
 
-        self.events.push(event);
+        if self.events_v2.stats().latest_event_index >= self.events.stats().latest_event_index {
+            self.events_v2.push(event);
+        } else {
+            self.events.push(event);
+        }
+    }
+
+    pub fn migrate_events(&mut self, count: u32) {
+        for event in self.events.get(self.events_v2.len(), count as u64) {
+            self.events_v2.push(IdempotentEvent {
+                idempotency_key: 0,
+                name: event.name,
+                timestamp: event.timestamp,
+                user: event.user,
+                source: event.source,
+                payload: event.payload,
+            });
+        }
     }
 
     fn anonymize(&self, value: &str) -> String {
