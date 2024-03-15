@@ -48,4 +48,15 @@ impl Anonymizable {
             Anonymizable::Public(value)
         }
     }
+
+    pub fn as_str(&self) -> &str {
+        match self {
+            Anonymizable::Public(s) => s,
+            Anonymizable::Anonymize(s) => s,
+        }
+    }
+
+    pub fn is_public(&self) -> bool {
+        matches!(self, Anonymizable::Public(_))
+    }
 }
