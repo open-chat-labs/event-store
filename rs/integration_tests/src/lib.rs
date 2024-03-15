@@ -2,9 +2,7 @@
 use crate::rng::{random, random_bytes, random_principal, random_string};
 use crate::setup::setup_new_env;
 use candid::Principal;
-use event_store_canister::{
-    AnonymizationInitConfig, EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs,
-};
+use event_store_canister::{Anonymizable, EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs};
 use pocket_ic::PocketIc;
 use std::fs::File;
 use std::io::Read;
@@ -81,11 +79,6 @@ fn users_and_source_can_be_anonymized(users: bool, sources: bool) {
     } = install_canister(Some(InitArgs {
         push_events_whitelist: vec![random_principal()],
         read_events_whitelist: vec![random_principal()],
-        anonymization_config: Some(AnonymizationInitConfig {
-            users: Some(users),
-            sources: Some(sources),
-            exclusions: None,
-        }),
     }));
 
     let user = random_string();
@@ -100,8 +93,8 @@ fn users_and_source_can_be_anonymized(users: bool, sources: bool) {
                 idempotency_key: random(),
                 name: random_string(),
                 timestamp: 1000,
-                user: Some(user.clone()),
-                source: Some(source.clone()),
+                user: Some(Anonymizable::new(user.clone(), users)),
+                source: Some(Anonymizable::new(source.clone(), sources)),
                 payload: Vec::new(),
             }],
         },
@@ -143,7 +136,6 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
     let init_args = init_args.unwrap_or_else(|| InitArgs {
         push_events_whitelist: vec![random_principal()],
         read_events_whitelist: vec![random_principal()],
-        anonymization_config: None,
     });
 
     let canister_id = env.create_canister_with_settings(Some(controller), None);
