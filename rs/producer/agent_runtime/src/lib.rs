@@ -73,7 +73,7 @@ async fn flush_async<F: FnOnce(FlushOutcome) + Send + 'static>(
     on_complete: F,
 ) {
     if agent
-        .update(&canister_id, "push_events".to_string())
+        .update(&canister_id, "push_events_v2".to_string())
         .with_arg(candid::encode_one(PushEventsArgs { events }).unwrap())
         .call_and_wait()
         .await
