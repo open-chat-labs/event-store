@@ -16,8 +16,8 @@ pub struct IdempotentEvent {
     pub idempotency_key: u128,
     pub name: String,
     pub timestamp: TimestampMillis,
-    pub user: Option<String>,
-    pub source: Option<String>,
+    pub user: Option<Anonymizable>,
+    pub source: Option<Anonymizable>,
     #[serde(with = "serde_bytes")]
     pub payload: Vec<u8>,
 }
@@ -31,4 +31,20 @@ pub struct IndexedEvent {
     pub source: Option<String>,
     #[serde(with = "serde_bytes")]
     pub payload: Vec<u8>,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub enum Anonymizable {
+    Public(String),
+    Anonymize(String),
+}
+
+impl Anonymizable {
+    pub fn new(value: String, anonymize: bool) -> Anonymizable {
+        if anonymize {
+            Anonymizable::Anonymize(value)
+        } else {
+            Anonymizable::Public(value)
+        }
+    }
 }

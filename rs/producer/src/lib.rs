@@ -1,4 +1,4 @@
-use event_store_canister::{IdempotentEvent, TimestampMillis};
+use event_store_canister::{Anonymizable, IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -41,16 +41,16 @@ struct ClientInner<R> {
 pub struct Event {
     name: String,
     timestamp: TimestampMillis,
-    user: Option<String>,
-    source: Option<String>,
+    user: Option<Anonymizable>,
+    source: Option<Anonymizable>,
     payload: Vec<u8>,
 }
 
 pub struct EventBuilder {
     name: String,
     timestamp: TimestampMillis,
-    user: Option<String>,
-    source: Option<String>,
+    user: Option<Anonymizable>,
+    source: Option<Anonymizable>,
     payload: Vec<u8>,
 }
 
@@ -65,23 +65,23 @@ impl EventBuilder {
         }
     }
 
-    pub fn with_user(mut self, user: impl Into<String>) -> Self {
-        self.user = Some(user.into());
+    pub fn with_user(mut self, user: impl Into<String>, anonymize: bool) -> Self {
+        self.user = Some(Anonymizable::new(user.into(), anonymize));
         self
     }
 
-    pub fn with_maybe_user(mut self, user: Option<impl Into<String>>) -> Self {
-        self.user = user.map(|u| u.into());
+    pub fn with_maybe_user(mut self, user: Option<impl Into<String>>, anonymize: bool) -> Self {
+        self.user = user.map(|u| Anonymizable::new(u.into(), anonymize));
         self
     }
 
-    pub fn with_source(mut self, source: impl Into<String>) -> Self {
-        self.source = Some(source.into());
+    pub fn with_source(mut self, source: impl Into<String>, anonymize: bool) -> Self {
+        self.source = Some(Anonymizable::new(source.into(), anonymize));
         self
     }
 
-    pub fn with_maybe_source(mut self, source: Option<impl Into<String>>) -> Self {
-        self.source = source.map(|u| u.into());
+    pub fn with_maybe_source(mut self, source: Option<impl Into<String>>, anonymize: bool) -> Self {
+        self.source = source.map(|u| Anonymizable::new(u.into(), anonymize));
         self
     }
 

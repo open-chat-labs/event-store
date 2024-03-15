@@ -1,11 +1,13 @@
 use crate::memory::{get_events_data_memory, get_events_index_memory, Memory};
 use crate::model::string_to_num_map::StringToNumMap;
 use candid::Deserialize;
-use event_store_canister::{IdempotentEvent, IndexedEvent, TimestampMillis};
+use event_store_canister::{Anonymizable, IdempotentEvent, IndexedEvent, TimestampMillis};
 use ic_stable_structures::storable::Bound;
 use ic_stable_structures::{StableLog, Storable};
 use serde::Serialize;
+use sha2::Digest;
 use std::borrow::Cow;
+use std::fmt::Write;
 
 pub struct Events {
     events: StableLog<StorableEvent, Memory, Memory>,
@@ -22,8 +24,8 @@ impl Events {
             .collect()
     }
 
-    pub fn push(&mut self, event: IdempotentEvent) {
-        let storable = self.convert_to_storable(event, self.events.len());
+    pub fn push(&mut self, event: IdempotentEvent, salt: [u8; 32]) {
+        let storable = self.convert_to_storable(event, self.events.len(), salt);
 
         self.events.append(&storable).unwrap();
     }
@@ -34,14 +36,23 @@ impl Events {
         }
     }
 
-    fn convert_to_storable(&mut self, event: IdempotentEvent, index: u64) -> StorableEvent {
+    fn convert_to_storable(
+        &mut self,
+        event: IdempotentEvent,
+        index: u64,
+        salt: [u8; 32],
+    ) -> StorableEvent {
         StorableEvent {
             index,
             name: self.string_to_num_map.convert_to_num(event.name),
             timestamp: event.timestamp,
-            user: event.user.map(|u| self.string_to_num_map.convert_to_num(u)),
+            user: event
+                .user
+                .map(|u| to_maybe_anonymized_string(u, salt))
+                .map(|u| self.string_to_num_map.convert_to_num(u)),
             source: event
                 .source
+                .map(|s| to_maybe_anonymized_string(s, salt))
                 .map(|s| self.string_to_num_map.convert_to_num(s)),
             payload: event.payload,
         }
@@ -118,4 +129,25 @@ impl Storable for StorableEvent {
 
 fn is_empty_slice<T>(vec: &[T]) -> bool {
     vec.is_empty()
+}
+
+fn to_maybe_anonymized_string(value: Anonymizable, salt: [u8; 32]) -> String {
+    match value {
+        Anonymizable::Public(s) => s,
+        Anonymizable::Anonymize(s) => anonymize(&s, salt),
+    }
+}
+
+fn anonymize(value: &str, salt: [u8; 32]) -> String {
+    // Generates a 32 character string from the input value + the salt
+    let mut hasher = sha2::Sha256::new();
+    hasher.update(value.as_bytes());
+    hasher.update(salt);
+    let hash: [u8; 32] = hasher.finalize().into();
+
+    let mut string = String::with_capacity(32);
+    for byte in &hash[0..16] {
+        write!(string, "{byte:02x}").unwrap();
+    }
+    string
 }
