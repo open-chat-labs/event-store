@@ -9,6 +9,7 @@ pub use lifecycle::*;
 pub use queries::*;
 pub use updates::*;
 
+pub type Milliseconds = u64;
 pub type TimestampMillis = u64;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]

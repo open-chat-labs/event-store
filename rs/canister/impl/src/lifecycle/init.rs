@@ -9,6 +9,7 @@ fn init(args: InitArgs) {
     state::init(State::new(
         args.push_events_whitelist.into_iter().collect(),
         args.read_events_whitelist.into_iter().collect(),
+        args.time_granularity,
     ));
 
     ic_cdk_timers::set_timer(Duration::ZERO, || {

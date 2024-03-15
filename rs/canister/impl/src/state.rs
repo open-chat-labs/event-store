@@ -2,7 +2,7 @@ use crate::env;
 use crate::model::events::Events;
 use crate::model::salt::Salt;
 use candid::Principal;
-use event_store_canister::{IdempotentEvent, TimestampMillis, WhitelistedPrincipals};
+use event_store_canister::{IdempotentEvent, Milliseconds, TimestampMillis, WhitelistedPrincipals};
 use event_store_utils::EventDeduper;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
@@ -16,6 +16,8 @@ thread_local! {
 pub struct State {
     push_events_whitelist: HashSet<Principal>,
     read_events_whitelist: HashSet<Principal>,
+    #[serde(default)]
+    time_granularity: Option<Milliseconds>,
     #[serde(skip)]
     events: Events,
     event_deduper: EventDeduper,
@@ -51,10 +53,12 @@ impl State {
     pub fn new(
         push_events_whitelist: HashSet<Principal>,
         read_events_whitelist: HashSet<Principal>,
+        time_granularity: Option<Milliseconds>,
     ) -> State {
         State {
             push_events_whitelist,
             read_events_whitelist,
+            time_granularity,
             events: Events::default(),
             event_deduper: EventDeduper::default(),
             salt: Salt::default(),
@@ -86,8 +90,14 @@ impl State {
         self.salt.set(salt);
     }
 
-    pub fn push_event(&mut self, event: IdempotentEvent, now: TimestampMillis) {
+    pub fn push_event(&mut self, mut event: IdempotentEvent, now: TimestampMillis) {
         if self.event_deduper.try_push(event.idempotency_key, now) {
+            if let Some(granularity) = self.time_granularity {
+                event.timestamp = event
+                    .timestamp
+                    .saturating_sub(event.timestamp % granularity);
+            }
+
             self.events.push(event, self.salt.get());
         }
     }
