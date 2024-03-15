@@ -121,19 +121,6 @@ impl State {
         self.events.push(event);
     }
 
-    pub fn migrate_events(&mut self, count: u32) {
-        for event in self.events.get(self.events.len(), count as u64) {
-            self.events.push(IdempotentEvent {
-                idempotency_key: 0,
-                name: event.name,
-                timestamp: event.timestamp,
-                user: event.user,
-                source: event.source,
-                payload: event.payload,
-            });
-        }
-    }
-
     fn anonymize(&self, value: &str) -> String {
         // Generates a 32 character string from the input value + the salt
         let mut hasher = sha2::Sha256::new();

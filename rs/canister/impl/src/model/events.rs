@@ -34,10 +34,6 @@ impl Events {
         }
     }
 
-    pub fn len(&self) -> u64 {
-        self.events.len()
-    }
-
     fn convert_to_storable(&mut self, event: IdempotentEvent, index: u64) -> StorableEvent {
         StorableEvent {
             index,
