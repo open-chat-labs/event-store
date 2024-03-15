@@ -2,7 +2,9 @@
 use crate::rng::{random, random_bytes, random_principal, random_string};
 use crate::setup::setup_new_env;
 use candid::Principal;
-use event_store_canister::{Anonymizable, EventsArgs, IdempotentEvent, InitArgs, PushEventsArgs};
+use event_store_canister::{
+    Anonymizable, EventsArgs, IdempotentEvent, InitArgs, Milliseconds, PushEventsArgs,
+};
 use pocket_ic::PocketIc;
 use std::fs::File;
 use std::io::Read;
@@ -79,6 +81,7 @@ fn users_and_source_can_be_anonymized(users: bool, sources: bool) {
     } = install_canister(Some(InitArgs {
         push_events_whitelist: vec![random_principal()],
         read_events_whitelist: vec![random_principal()],
+        time_granularity: None,
     }));
 
     let user = random_string();
@@ -129,6 +132,87 @@ fn users_and_source_can_be_anonymized(users: bool, sources: bool) {
     }
 }
 
+#[test_case(None)]
+#[test_case(Some(100))]
+#[test_case(Some(1000))]
+fn time_granularity_applied_correctly(time_granularity: Option<Milliseconds>) {
+    let TestEnv {
+        mut env,
+        canister_id,
+        push_principals,
+        read_principals,
+        ..
+    } = install_canister(Some(InitArgs {
+        push_events_whitelist: vec![random_principal()],
+        read_events_whitelist: vec![random_principal()],
+        time_granularity,
+    }));
+
+    client::push_events(
+        &mut env,
+        *push_principals.first().unwrap(),
+        canister_id,
+        &PushEventsArgs {
+            events: vec![
+                IdempotentEvent {
+                    idempotency_key: random(),
+                    name: random_string(),
+                    timestamp: 1001,
+                    user: None,
+                    source: None,
+                    payload: Vec::new(),
+                },
+                IdempotentEvent {
+                    idempotency_key: random(),
+                    name: random_string(),
+                    timestamp: 2150,
+                    user: None,
+                    source: None,
+                    payload: Vec::new(),
+                },
+                IdempotentEvent {
+                    idempotency_key: random(),
+                    name: random_string(),
+                    timestamp: 3299,
+                    user: None,
+                    source: None,
+                    payload: Vec::new(),
+                },
+            ],
+        },
+    );
+
+    let events = client::events(
+        &env,
+        *read_principals.first().unwrap(),
+        canister_id,
+        &EventsArgs {
+            start: 0,
+            length: 3,
+        },
+    )
+    .events;
+
+    match time_granularity {
+        None => {
+            assert_eq!(events[0].timestamp, 1001);
+            assert_eq!(events[1].timestamp, 2150);
+            assert_eq!(events[2].timestamp, 3299);
+        }
+        Some(100) => {
+            assert_eq!(events[0].timestamp, 1000);
+            assert_eq!(events[1].timestamp, 2100);
+            assert_eq!(events[2].timestamp, 3200);
+        }
+        Some(1000) => {
+            assert_eq!(events[0].timestamp, 1000);
+            assert_eq!(events[1].timestamp, 2000);
+            assert_eq!(events[2].timestamp, 3000);
+        }
+        _ => panic!(),
+    }
+}
+
 fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
     let env = setup_new_env();
     let controller = random_principal();
@@ -136,6 +220,7 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
     let init_args = init_args.unwrap_or_else(|| InitArgs {
         push_events_whitelist: vec![random_principal()],
         read_events_whitelist: vec![random_principal()],
+        time_granularity: None,
     });
 
     let canister_id = env.create_canister_with_settings(Some(controller), None);
