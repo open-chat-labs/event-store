@@ -55,7 +55,7 @@ async fn flush_async<F: FnOnce(FlushOutcome)>(
 ) {
     let events_len = events.len();
     if let Err(error) =
-        ic_cdk::call::<_, ()>(canister_id, "push_events", (PushEventsArgs { events },)).await
+        ic_cdk::call::<_, ()>(canister_id, "push_events_v2", (PushEventsArgs { events },)).await
     {
         on_complete(FLUSH_OUTCOME_FAILED_SHOULD_RETRY);
         error!(%canister_id, events = events_len, ?error, "Failed to call 'push_events'");

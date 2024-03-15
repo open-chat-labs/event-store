@@ -24,6 +24,17 @@ pub struct IdempotentEvent {
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct IdempotentEventPrevious {
+    pub idempotency_key: u128,
+    pub name: String,
+    pub timestamp: TimestampMillis,
+    pub user: Option<String>,
+    pub source: Option<String>,
+    #[serde(with = "serde_bytes")]
+    pub payload: Vec<u8>,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct IndexedEvent {
     pub index: u64,
     pub name: String,
