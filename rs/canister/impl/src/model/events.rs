@@ -146,7 +146,7 @@ fn anonymize(value: &str, salt: [u8; 32]) -> String {
     let hash: [u8; 32] = hasher.finalize().into();
 
     let mut string = String::with_capacity(32);
-    for byte in &hash[0..16] {
+    for byte in &hash[16..] {
         write!(string, "{byte:02x}").unwrap();
     }
     string
