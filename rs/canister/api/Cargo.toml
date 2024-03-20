@@ -9,3 +9,7 @@ edition = "2021"
 candid.workspace = true
 serde.workspace = true
 serde_bytes.workspace = true
+
+[dev-dependencies]
+rmp-serde = "1.1.2"
+test-case.workspace = true
