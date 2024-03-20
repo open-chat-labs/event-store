@@ -20,7 +20,7 @@ impl AgentRuntime {
     ) -> Result<EventsResponse, (i32, String)> {
         match self
             .agent
-            .query(&canister_id, "events")
+            .query(&canister_id, "events_v2")
             .with_arg(candid::encode_one(args).unwrap())
             .call()
             .await
