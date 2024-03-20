@@ -168,7 +168,7 @@ impl<'de> Deserialize<'de> for Anonymizable {
             }
         }
         #[doc(hidden)]
-        const VARIANTS: &'static [&'static str] = &["Public", "Anonymize"];
+        const VARIANTS: &[&str] = &["Public", "Anonymize"];
         Deserializer::deserialize_enum(
             deserializer,
             "Anonymizable",
@@ -181,42 +181,47 @@ impl<'de> Deserialize<'de> for Anonymizable {
     }
 }
 
-#[test_case::test_case(true)]
-#[test_case::test_case(false)]
-fn deserialization_succeeds(current_version: bool) {
-    let bytes: Vec<_>;
-    if current_version {
-        let value = IdempotentEvent {
-            idempotency_key: 1,
-            name: "name".to_string(),
-            timestamp: 2,
-            user: Some(Anonymizable::Public("user".to_string())),
-            source: Some(Anonymizable::Public("source".to_string())),
-            payload: vec![1, 2, 3],
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test_case::test_case;
+
+    #[test_case(true)]
+    #[test_case(false)]
+    fn deserialization_succeeds(current_version: bool) {
+        let bytes = if current_version {
+            let value = IdempotentEvent {
+                idempotency_key: 1,
+                name: "name".to_string(),
+                timestamp: 2,
+                user: Some(Anonymizable::Public("user".to_string())),
+                source: Some(Anonymizable::Public("source".to_string())),
+                payload: vec![1, 2, 3],
+            };
+
+            rmp_serde::to_vec_named(&value).unwrap()
+        } else {
+            let value = IdempotentEventPrevious {
+                idempotency_key: 1,
+                name: "name".to_string(),
+                timestamp: 2,
+                user: Some("user".to_string()),
+                source: Some("source".to_string()),
+                payload: vec![1, 2, 3],
+            };
+
+            rmp_serde::to_vec_named(&value).unwrap()
         };
 
-        bytes = rmp_serde::to_vec_named(&value).unwrap();
-    } else {
-        let value = IdempotentEventPrevious {
-            idempotency_key: 1,
-            name: "name".to_string(),
-            timestamp: 2,
-            user: Some("user".to_string()),
-            source: Some("source".to_string()),
-            payload: vec![1, 2, 3],
-        };
+        let deserialized: IdempotentEvent = rmp_serde::from_slice(&bytes).unwrap();
 
-        bytes = rmp_serde::to_vec_named(&value).unwrap();
+        assert_eq!(deserialized.idempotency_key, 1);
+        assert_eq!(deserialized.name, "name");
+        assert_eq!(deserialized.timestamp, 2);
+        assert_eq!(deserialized.user.clone().unwrap().as_str(), "user");
+        assert!(deserialized.user.clone().unwrap().is_public());
+        assert_eq!(deserialized.source.clone().unwrap().as_str(), "source");
+        assert!(deserialized.source.clone().unwrap().is_public());
+        assert_eq!(deserialized.payload, vec![1, 2, 3]);
     }
-
-    let deserialized: IdempotentEvent = rmp_serde::from_slice(&bytes).unwrap();
-
-    assert_eq!(deserialized.idempotency_key, 1);
-    assert_eq!(deserialized.name, "name");
-    assert_eq!(deserialized.timestamp, 2);
-    assert_eq!(deserialized.user.clone().unwrap().as_str(), "user");
-    assert!(deserialized.user.clone().unwrap().is_public());
-    assert_eq!(deserialized.source.clone().unwrap().as_str(), "source");
-    assert!(deserialized.source.clone().unwrap().is_public());
-    assert_eq!(deserialized.payload, vec![1, 2, 3]);
 }
