@@ -499,8 +499,10 @@ name = "event_store_canister"
 version = "0.1.0"
 dependencies = [
  "candid",
+ "rmp-serde",
  "serde",
  "serde_bytes",
+ "test-case",
 ]
 
 [[package]]
