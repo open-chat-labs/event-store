@@ -22,8 +22,6 @@ pub struct State {
     events: Events,
     #[serde(skip, default = "Events::new_v2")]
     events_v2: Events,
-    #[serde(skip_deserializing)]
-    next_to_migrate: u64,
     event_deduper: EventDeduper,
     salt: Salt,
 }
@@ -66,7 +64,6 @@ impl State {
             events: Events::default(),
             events_v2: Events::new_v2(),
             event_deduper: EventDeduper::default(),
-            next_to_migrate: 0,
             salt: Salt::default(),
         }
     }
