@@ -116,10 +116,16 @@ impl State {
 
     pub fn migrate_events(&mut self, count: u32) {
         let salt = self.salt.get();
-        for event in self.events.get(self.next_to_migrate, count as u64) {
+        for mut event in self.events.get(self.next_to_migrate, count as u64) {
             self.next_to_migrate += 1;
 
             if event.name != "message_sent" {
+                if let Some(granularity) = self.time_granularity {
+                    event.timestamp = event
+                        .timestamp
+                        .saturating_sub(event.timestamp % granularity);
+                }
+
                 self.events_v2.push(
                     IdempotentEvent {
                         idempotency_key: 0,
