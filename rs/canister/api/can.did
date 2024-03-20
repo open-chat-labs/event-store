@@ -12,14 +12,6 @@ type IdempotentEvent = record {
   payload : vec nat8;
   idempotency_key : nat;
 };
-type IdempotentEventPrevious = record {
-  source : opt text;
-  name : text;
-  user : opt text;
-  timestamp : nat64;
-  payload : vec nat8;
-  idempotency_key : nat;
-};
 type IndexedEvent = record {
   source : opt text;
   name : text;
@@ -34,14 +26,13 @@ type InitArgs = record {
   time_granularity : opt nat64;
 };
 type PushEventsArgs = record { events : vec IdempotentEvent };
-type PushEventsArgsPrevious = record { events : vec IdempotentEventPrevious };
 type WhitelistedPrincipals = record {
   push : vec principal;
   read : vec principal;
 };
 service : (InitArgs) -> {
   events : (EventsArgs) -> (EventsResponse) query;
-  push_events : (PushEventsArgsPrevious) -> ();
+  push_events : (PushEventsArgs) -> ();
   push_events_v2 : (PushEventsArgs) -> ();
   whitelisted_principals : () -> (WhitelistedPrincipals) query;
 }
