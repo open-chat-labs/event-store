@@ -15,3 +15,16 @@ fn events(args: EventsArgs) -> EventsResponse {
         }
     })
 }
+
+#[query(guard = "caller_can_read_events")]
+fn events_v2(args: EventsArgs) -> EventsResponse {
+    state::read(|s| {
+        let stats = s.events_v2().stats();
+        let events = s.events_v2().get(args.start, args.length);
+
+        EventsResponse {
+            events,
+            latest_event_index: stats.latest_event_index,
+        }
+    })
+}
