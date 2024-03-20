@@ -2,9 +2,7 @@ use crate::env;
 use crate::model::events::Events;
 use crate::model::salt::Salt;
 use candid::Principal;
-use event_store_canister::{
-    Anonymizable, IdempotentEvent, Milliseconds, TimestampMillis, WhitelistedPrincipals,
-};
+use event_store_canister::{IdempotentEvent, Milliseconds, TimestampMillis, WhitelistedPrincipals};
 use event_store_utils::EventDeduper;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
@@ -110,34 +108,8 @@ impl State {
                     .saturating_sub(event.timestamp % granularity);
             }
 
-            self.events.push(event, self.salt.get());
-        }
-    }
-
-    pub fn migrate_events(&mut self, count: u32) {
-        let salt = self.salt.get();
-        for mut event in self.events.get(self.next_to_migrate, count as u64) {
-            self.next_to_migrate += 1;
-
-            if event.name != "message_sent" {
-                if let Some(granularity) = self.time_granularity {
-                    event.timestamp = event
-                        .timestamp
-                        .saturating_sub(event.timestamp % granularity);
-                }
-
-                self.events_v2.push(
-                    IdempotentEvent {
-                        idempotency_key: 0,
-                        name: event.name,
-                        timestamp: event.timestamp,
-                        user: event.user.map(Anonymizable::Public),
-                        source: event.source.map(Anonymizable::Public),
-                        payload: event.payload,
-                    },
-                    salt,
-                );
-            }
+            self.events.push(event.clone(), self.salt.get());
+            self.events_v2.push(event, self.salt.get());
         }
     }
 }
