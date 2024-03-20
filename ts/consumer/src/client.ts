@@ -1,7 +1,6 @@
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { Secp256k1KeyIdentity } from "@dfinity/identity-secp256k1";
-import pemfile from "pem-file";
 import { EventStoreCanister, idlFactory } from "./candid/idl";
 import type { EventsResponse } from "./types";
 import { candidEventsResponse } from "./mappers";
@@ -17,11 +16,7 @@ export class Client {
   }
 
   public static createFromPem(canisterId: string | Principal, pem: string): Client {
-    const buf = pemfile.decode(pem);
-    if (buf.length != 118) {
-      throw 'expecting byte length 118 but got ' + buf.length;
-    }
-    const identity = Secp256k1KeyIdentity.fromSecretKey(buf.subarray(7, 39));
+    const identity = Secp256k1KeyIdentity.fromPem(pem);
     const httpAgent = new HttpAgent({ identity });
     return new Client(canisterId, httpAgent);
   }

@@ -7,10 +7,9 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@dfinity/agent": "^1.0.0",
-    "@dfinity/identity-secp256k1": "^1.0.0",
-    "@dfinity/principal": "^1.0.0",
-    "pem-file": "^1.0.1"
+    "@dfinity/agent": "^1.1.1",
+    "@dfinity/identity-secp256k1": "^1.1.1",
+    "@dfinity/principal": "^1.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",
