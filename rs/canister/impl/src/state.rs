@@ -2,7 +2,9 @@ use crate::env;
 use crate::model::events::Events;
 use crate::model::salt::Salt;
 use candid::Principal;
-use event_store_canister::{IdempotentEvent, Milliseconds, TimestampMillis, WhitelistedPrincipals};
+use event_store_canister::{
+    Anonymizable, IdempotentEvent, Milliseconds, TimestampMillis, WhitelistedPrincipals,
+};
 use event_store_utils::EventDeduper;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
@@ -20,6 +22,10 @@ pub struct State {
     time_granularity: Option<Milliseconds>,
     #[serde(skip)]
     events: Events,
+    #[serde(skip, default = "Events::new_v2")]
+    events_v2: Events,
+    #[serde(skip_deserializing)]
+    next_to_migrate: u64,
     event_deduper: EventDeduper,
     salt: Salt,
 }
@@ -60,7 +66,9 @@ impl State {
             read_events_whitelist,
             time_granularity,
             events: Events::default(),
+            events_v2: Events::new_v2(),
             event_deduper: EventDeduper::default(),
+            next_to_migrate: 0,
             salt: Salt::default(),
         }
     }
@@ -86,6 +94,10 @@ impl State {
         &self.events
     }
 
+    pub fn events_v2(&self) -> &Events {
+        &self.events_v2
+    }
+
     pub fn set_salt(&mut self, salt: [u8; 32]) {
         self.salt.set(salt);
     }
@@ -99,6 +111,27 @@ impl State {
             }
 
             self.events.push(event, self.salt.get());
+        }
+    }
+
+    pub fn migrate_events(&mut self, count: u32) {
+        let salt = self.salt.get();
+        for event in self.events.get(self.next_to_migrate, count as u64) {
+            self.next_to_migrate += 1;
+
+            if event.name != "message_sent" {
+                self.events_v2.push(
+                    IdempotentEvent {
+                        idempotency_key: 0,
+                        name: event.name,
+                        timestamp: event.timestamp,
+                        user: event.user.map(Anonymizable::Public),
+                        source: event.source.map(Anonymizable::Public),
+                        payload: event.payload,
+                    },
+                    salt,
+                );
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 use crate::memory::{
-    get_num_to_string_data_memory, get_num_to_string_index_memory, get_string_to_num_map_memory,
-    Memory,
+    get_num_to_string_data_memory, get_num_to_string_index_memory,
+    get_num_to_string_v2_data_memory, get_num_to_string_v2_index_memory,
+    get_string_to_num_map_memory, get_string_to_num_v2_map_memory, Memory,
 };
 use ic_stable_structures::{StableBTreeMap, StableLog};
 
@@ -10,6 +11,17 @@ pub struct StringToNumMap {
 }
 
 impl StringToNumMap {
+    pub fn new_v2() -> Self {
+        StringToNumMap {
+            string_to_num: StableBTreeMap::init(get_string_to_num_v2_map_memory()),
+            num_to_string: StableLog::init(
+                get_num_to_string_v2_index_memory(),
+                get_num_to_string_v2_data_memory(),
+            )
+            .unwrap(),
+        }
+    }
+
     pub fn convert_to_num(&mut self, string: String) -> u32 {
         if let Some(i) = self.string_to_num.get(&string) {
             i
