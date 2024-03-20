@@ -22,7 +22,7 @@ export class Client {
   }
 
   public async events(start: bigint, length: bigint): Promise<EventsResponse> {
-    const candid = await this.canister.events({
+    const candid = await this.canister.events_v2({
       start,
       length,
     });

@@ -13,7 +13,7 @@ impl CdkRuntime {
         canister_id: Principal,
         args: EventsArgs,
     ) -> Result<EventsResponse, (i32, String)> {
-        match ic_cdk::call(canister_id, "events", (args,)).await {
+        match ic_cdk::call(canister_id, "events_v2", (args,)).await {
             Ok((response,)) => Ok(response),
             Err((code, msg)) => Err((code as i32, msg)),
         }
