@@ -32,6 +32,7 @@ type WhitelistedPrincipals = record {
 };
 service : (InitArgs) -> {
   events : (EventsArgs) -> (EventsResponse) query;
+  events_v2 : (EventsArgs) -> (EventsResponse) query;
   push_events : (PushEventsArgs) -> ();
   push_events_v2 : (PushEventsArgs) -> ();
   whitelisted_principals : () -> (WhitelistedPrincipals) query;
