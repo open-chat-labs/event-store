@@ -1,7 +1,4 @@
-use crate::memory::{
-    get_events_data_memory, get_events_index_memory, get_events_v2_data_memory,
-    get_events_v2_index_memory, Memory,
-};
+use crate::memory::{get_events_data_memory, get_events_index_memory, Memory};
 use crate::model::string_to_num_map::StringToNumMap;
 use candid::Deserialize;
 use event_store_canister::{Anonymizable, IdempotentEvent, IndexedEvent, TimestampMillis};
@@ -18,14 +15,6 @@ pub struct Events {
 }
 
 impl Events {
-    pub fn new_v2() -> Self {
-        Events {
-            events: StableLog::init(get_events_v2_index_memory(), get_events_v2_data_memory())
-                .unwrap(),
-            string_to_num_map: StringToNumMap::new_v2(),
-        }
-    }
-
     pub fn get(&self, start: u64, length: u64) -> Vec<IndexedEvent> {
         self.events
             .iter()
