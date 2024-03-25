@@ -16,12 +16,9 @@ thread_local! {
 pub struct State {
     push_events_whitelist: HashSet<Principal>,
     read_events_whitelist: HashSet<Principal>,
-    #[serde(default)]
     time_granularity: Option<Milliseconds>,
     #[serde(skip)]
     events: Events,
-    #[serde(skip, default = "Events::new_v2")]
-    events_v2: Events,
     event_deduper: EventDeduper,
     salt: Salt,
 }
@@ -62,7 +59,6 @@ impl State {
             read_events_whitelist,
             time_granularity,
             events: Events::default(),
-            events_v2: Events::new_v2(),
             event_deduper: EventDeduper::default(),
             salt: Salt::default(),
         }
@@ -89,10 +85,6 @@ impl State {
         &self.events
     }
 
-    pub fn events_v2(&self) -> &Events {
-        &self.events_v2
-    }
-
     pub fn set_salt(&mut self, salt: [u8; 32]) {
         self.salt.set(salt);
     }
@@ -105,8 +97,7 @@ impl State {
                     .saturating_sub(event.timestamp % granularity);
             }
 
-            self.events.push(event.clone(), self.salt.get());
-            self.events_v2.push(event, self.salt.get());
+            self.events.push(event, self.salt.get());
         }
     }
 }
