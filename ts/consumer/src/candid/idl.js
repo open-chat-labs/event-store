@@ -36,9 +36,7 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'events' : IDL.Func([EventsArgs], [EventsResponse], ['query']),
-    'events_v2' : IDL.Func([EventsArgs], [EventsResponse], ['query']),
     'push_events' : IDL.Func([PushEventsArgs], [], []),
-    'push_events_v2' : IDL.Func([PushEventsArgs], [], []),
     'whitelisted_principals' : IDL.Func([], [WhitelistedPrincipals], ['query']),
   });
 };
