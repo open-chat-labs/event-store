@@ -58,11 +58,9 @@ async fn flush_async<F: FnOnce(FlushOutcome)>(
         ic_cdk::call::<_, ()>(canister_id, "push_events", (PushEventsArgs { events },)).await
     {
         on_complete(FLUSH_OUTCOME_FAILED_SHOULD_RETRY);
-        ic_cdk::println!("Failed to call 'push_events'");
         error!(%canister_id, events = events_len, ?error, "Failed to call 'push_events'");
     } else {
         on_complete(FLUSH_OUTCOME_SUCCESS);
-        ic_cdk::println!("Successfully called `push_events`");
         trace!(%canister_id, events = events_len, "Successfully called `push_events`");
     }
 }
