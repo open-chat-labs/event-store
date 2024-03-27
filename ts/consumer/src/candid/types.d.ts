@@ -36,8 +36,6 @@ export interface WhitelistedPrincipals {
 }
 export interface _SERVICE {
   'events' : ActorMethod<[EventsArgs], EventsResponse>,
-  'events_v2' : ActorMethod<[EventsArgs], EventsResponse>,
   'push_events' : ActorMethod<[PushEventsArgs], undefined>,
-  'push_events_v2' : ActorMethod<[PushEventsArgs], undefined>,
   'whitelisted_principals' : ActorMethod<[], WhitelistedPrincipals>,
 }
