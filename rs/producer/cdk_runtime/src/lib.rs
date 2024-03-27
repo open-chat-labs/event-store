@@ -58,9 +58,11 @@ async fn flush_async<F: FnOnce(FlushOutcome)>(
         ic_cdk::call::<_, ()>(canister_id, "push_events", (PushEventsArgs { events },)).await
     {
         on_complete(FLUSH_OUTCOME_FAILED_SHOULD_RETRY);
+        ic_cdk::println!("Failed to call 'push_events'");
         error!(%canister_id, events = events_len, ?error, "Failed to call 'push_events'");
     } else {
         on_complete(FLUSH_OUTCOME_SUCCESS);
+        ic_cdk::println!("Successfully called `push_events`");
         trace!(%canister_id, events = events_len, "Successfully called `push_events`");
     }
 }
@@ -77,7 +79,10 @@ impl Default for CdkRuntime {
 #[cfg(target_arch = "wasm32")]
 fn rng_seed() -> [u8; 32] {
     let mut seed = [0; 32];
-    seed[..8].copy_from_slice(&ic_cdk::api::time().to_ne_bytes());
+    let mut bytes = Vec::new();
+    bytes.extend_from_slice(ic_cdk::id().as_slice());
+    bytes.extend_from_slice(&ic_cdk::api::time().to_be_bytes());
+    seed[..bytes.len()].copy_from_slice(&bytes);
     seed
 }
 
