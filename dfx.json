@@ -1,9 +1,10 @@
 {
   "canisters": {
     "event_store": {
+      "type": "custom",
       "candid": "rs/canister/api/can.did",
-      "package": "event_store_canister_impl",
-      "type": "rust"
+      "wasm": "wasms/event_store.wasm.gz",
+      "build":  "scripts/build-wasm.sh"
     }
   },
   "version": 1
