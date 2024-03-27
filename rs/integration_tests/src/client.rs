@@ -18,7 +18,7 @@ pub fn push_events(
     canister_id: Principal,
     args: &PushEventsArgs,
 ) {
-    execute_update_no_response(env, sender, canister_id, "push_events_v2", args)
+    execute_update_no_response(env, sender, canister_id, "push_events", args)
 }
 
 fn execute_query<P: CandidType, R: CandidType + DeserializeOwned>(
