@@ -18,13 +18,7 @@ mod generate_candid_file {
     #[test]
     fn save_candid() {
         let dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        let dir = dir
-            .parent()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .join("canister")
-            .join("api");
+        let dir = dir.parent().unwrap().join("api");
 
         export_candid!();
         write(dir.join("can.did"), __export_service()).unwrap()
