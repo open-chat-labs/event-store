@@ -24,10 +24,11 @@ impl Events {
             .collect()
     }
 
-    pub fn push(&mut self, event: IdempotentEvent, salt: [u8; 32]) {
-        let storable = self.convert_to_storable(event, self.events.len(), salt);
-
+    pub fn push(&mut self, event: IdempotentEvent, salt: [u8; 32]) -> IndexedEvent {
+        let indexed = self.convert_to_indexed(event, salt);
+        let storable = self.convert_to_storable(&indexed);
         self.events.append(&storable).unwrap();
+        indexed
     }
 
     pub fn stats(&self) -> EventsStats {
@@ -36,25 +37,31 @@ impl Events {
         }
     }
 
-    fn convert_to_storable(
-        &mut self,
-        event: IdempotentEvent,
-        index: u64,
-        salt: [u8; 32],
-    ) -> StorableEvent {
+    fn convert_to_indexed(&mut self, event: IdempotentEvent, salt: [u8; 32]) -> IndexedEvent {
+        IndexedEvent {
+            index: self.events.len(),
+            name: event.name,
+            timestamp: event.timestamp,
+            user: event.user.map(|u| to_maybe_anonymized_string(u, salt)),
+            source: event.source.map(|s| to_maybe_anonymized_string(s, salt)),
+            payload: event.payload,
+        }
+    }
+
+    fn convert_to_storable(&mut self, event: &IndexedEvent) -> StorableEvent {
         StorableEvent {
-            index,
-            name: self.string_to_num_map.convert_to_num(event.name),
+            index: event.index,
+            name: self.string_to_num_map.convert_to_num(&event.name),
             timestamp: event.timestamp,
             user: event
                 .user
-                .map(|u| to_maybe_anonymized_string(u, salt))
+                .as_ref()
                 .map(|u| self.string_to_num_map.convert_to_num(u)),
             source: event
                 .source
-                .map(|s| to_maybe_anonymized_string(s, salt))
+                .as_ref()
                 .map(|s| self.string_to_num_map.convert_to_num(s)),
-            payload: event.payload,
+            payload: event.payload.clone(),
         }
     }
 

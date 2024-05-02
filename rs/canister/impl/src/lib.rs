@@ -1,5 +1,6 @@
 mod env;
 mod guards;
+mod integrations;
 mod lifecycle;
 mod memory;
 mod model;
