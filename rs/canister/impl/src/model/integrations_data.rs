@@ -7,6 +7,7 @@ pub struct IntegrationsData {
     pub dapp_radar: crate::integrations::dapp_radar::DappRadarData,
 }
 
+#[allow(unused_mut)]
 #[allow(unused_variables)]
 impl IntegrationsData {
     pub fn push_event(&mut self, event: IndexedEvent) {
@@ -14,6 +15,21 @@ impl IntegrationsData {
         if let Some(user) = event.user {
             self.dapp_radar
                 .push_event(event.index, user, event.timestamp);
+        }
+    }
+
+    pub fn next_event_index(&self) -> Option<u64> {
+        let mut index = u64::MAX;
+
+        #[cfg(feature = "dapp-radar")]
+        {
+            index = std::cmp::min(index, self.dapp_radar.next_event_index());
+        }
+
+        if index == u64::MAX {
+            None
+        } else {
+            Some(index)
         }
     }
 }

@@ -17,6 +17,7 @@ ic-cdk.workspace = true
 ic-cdk-timers.workspace = true
 ic-http-certification.workspace = true
 ic-stable-structures.workspace = true
+querystring = { workspace = true, optional = true }
 rmp-serde.workspace = true
 serde.workspace = true
 serde_bytes.workspace = true
@@ -26,4 +27,4 @@ time = { workspace = true, optional = true }
 
 [features]
 default = ["dapp-radar"]
-dapp-radar = ["serde_json", "time"]
+dapp-radar = ["querystring", "serde_json", "time"]

@@ -12,26 +12,6 @@ pub struct DappRadarData {
     next_event_index: u64,
 }
 
-#[derive(Serialize, Deserialize, Default)]
-pub struct EventsPerUser {
-    per_user: BTreeMap<String, u32>,
-}
-
-#[derive(Serialize)]
-pub struct DappRadarResponse {
-    results: Vec<DappRadarResponseEntry>,
-    #[serde(rename = "pageCount")]
-    page_count: u32,
-}
-
-#[derive(Serialize)]
-struct DappRadarResponseEntry {
-    #[serde(rename = "dateTime", skip_serializing_if = "Option::is_none")]
-    date_time: Option<String>,
-    user: String,
-    transactions: u32,
-}
-
 impl DappRadarData {
     pub fn push_event(&mut self, index: u64, user: String, timestamp: TimestampMillis) -> bool {
         if index != self.next_event_index {
@@ -58,6 +38,10 @@ impl DappRadarData {
 
         self.next_event_index = index + 1;
         true
+    }
+
+    pub fn next_event_index(&self) -> u64 {
+        self.next_event_index
     }
 
     pub fn hourly(&self, year: u32, month: u8, day: u8, page: usize) -> DappRadarResponse {
@@ -99,24 +83,41 @@ impl DappRadarData {
     }
 
     fn extract_page(all_results: Vec<DappRadarResponseEntry>, page: usize) -> DappRadarResponse {
-        if all_results.is_empty() {
-            DappRadarResponse {
-                results: Vec::new(),
-                page_count: 0,
-            }
-        } else {
-            let page_count = (((all_results.len() - 1) / PAGE_SIZE) + 1) as u32;
+        let page_count = (((all_results.len() - 1) / PAGE_SIZE) + 1) as u32;
 
-            DappRadarResponse {
-                results: all_results
+        DappRadarResponse {
+            results: if page == 0 {
+                Vec::new()
+            } else {
+                all_results
                     .into_iter()
-                    .skip(page * PAGE_SIZE)
+                    .skip(page.saturating_sub(1) * PAGE_SIZE)
                     .take(PAGE_SIZE)
-                    .collect(),
-                page_count,
-            }
+                    .collect()
+            },
+            page_count,
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct EventsPerUser {
+    per_user: BTreeMap<String, u32>,
+}
+
+#[derive(Serialize)]
+pub struct DappRadarResponse {
+    results: Vec<DappRadarResponseEntry>,
+    #[serde(rename = "pageCount")]
+    page_count: u32,
+}
+
+#[derive(Serialize)]
+struct DappRadarResponseEntry {
+    #[serde(rename = "dateTime", skip_serializing_if = "Option::is_none")]
+    date_time: Option<String>,
+    user: String,
+    transactions: u32,
 }
 
 impl EventsPerUser {

@@ -11,7 +11,9 @@ fn http_request(request: HttpRequest) -> HttpResponse {
     match segments.first() {
         #[cfg(feature = "dapp-radar")]
         Some(&"dapp-radar") => {
-            if let Some(response) = process_dapp_radar_request(segments) {
+            if let Some(response) =
+                process_dapp_radar_request(segments, request.get_query().ok().flatten())
+            {
                 return response;
             }
         }
@@ -22,12 +24,21 @@ fn http_request(request: HttpRequest) -> HttpResponse {
 }
 
 #[cfg(feature = "dapp-radar")]
-pub fn process_dapp_radar_request(segments: Vec<&str>) -> Option<HttpResponse> {
+pub fn process_dapp_radar_request(segments: Vec<&str>, qs: Option<String>) -> Option<HttpResponse> {
     use std::str::FromStr;
 
     if segments.len() != 4 || segments[0] != "dapp-radar" || segments[1] != "aggregated-data" {
         return None;
     }
+
+    let page = qs
+        .as_deref()
+        .map(querystring::querify)
+        .unwrap_or_default()
+        .into_iter()
+        .find(|(k, _)| *k == "page")
+        .map(|(_, v)| usize::from_str(v).unwrap())
+        .unwrap_or_default();
 
     let date_str = segments[2];
     let grouping = segments[3];
@@ -50,9 +61,17 @@ pub fn process_dapp_radar_request(segments: Vec<&str>) -> Option<HttpResponse> {
     };
 
     let data = if grouping == "daily" {
-        crate::state::read(|s| s.integrations_data().dapp_radar.daily(year, month, day, 0))
+        crate::state::read(|s| {
+            s.integrations_data()
+                .dapp_radar
+                .daily(year, month, day, page)
+        })
     } else if grouping == "hourly" {
-        crate::state::read(|s| s.integrations_data().dapp_radar.hourly(year, month, day, 0))
+        crate::state::read(|s| {
+            s.integrations_data()
+                .dapp_radar
+                .hourly(year, month, day, page)
+        })
     } else {
         return None;
     };

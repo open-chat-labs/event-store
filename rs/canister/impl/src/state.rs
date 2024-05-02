@@ -111,4 +111,9 @@ impl State {
     pub fn integrations_data(&self) -> &IntegrationsData {
         &self.integrations_data
     }
+
+    #[allow(dead_code)]
+    pub fn integrations_data_mut(&mut self) -> &mut IntegrationsData {
+        &mut self.integrations_data
+    }
 }
