@@ -8,7 +8,7 @@ fn http_request(request: HttpRequest) -> HttpResponse {
     };
     let segments: Vec<_> = path.split('/').skip(1).collect();
 
-    match segments.get(0) {
+    match segments.first() {
         #[cfg(feature = "dapp-radar")]
         Some(&"dapp-radar") => {
             if let Some(response) = process_dapp_radar_request(segments) {

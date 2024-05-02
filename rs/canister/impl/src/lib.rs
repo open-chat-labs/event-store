@@ -12,6 +12,7 @@ mod updates;
 mod generate_candid_file {
     use event_store_canister::*;
     use ic_cdk::export_candid;
+    use ic_http_certification::*;
     use std::env;
     use std::fs::write;
     use std::path::PathBuf;
