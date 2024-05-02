@@ -9,6 +9,7 @@ const PAGE_SIZE: usize = 1000;
 pub struct DappRadarData {
     daily: BTreeMap<(u32, u8, u8), EventsPerUser>,
     hourly: BTreeMap<(u32, u8, u8, u8), EventsPerUser>,
+    next_event_index: u64,
 }
 
 #[derive(Serialize, Deserialize, Default)]
@@ -32,7 +33,11 @@ struct DappRadarResponseEntry {
 }
 
 impl DappRadarData {
-    pub fn push_event(&mut self, user: String, timestamp: TimestampMillis) {
+    pub fn push_event(&mut self, index: u64, user: String, timestamp: TimestampMillis) -> bool {
+        if index != self.next_event_index {
+            return false;
+        }
+
         let datetime =
             time::OffsetDateTime::from_unix_timestamp((timestamp / 1000) as i64).unwrap();
 
@@ -50,6 +55,9 @@ impl DappRadarData {
         while self.hourly.len() > HOURLY_MAX_ENTRIES {
             self.hourly.pop_first();
         }
+
+        self.next_event_index = index + 1;
+        true
     }
 
     pub fn hourly(&self, year: u32, month: u8, day: u8, page: usize) -> DappRadarResponse {

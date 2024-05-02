@@ -12,7 +12,8 @@ impl IntegrationsData {
     pub fn push_event(&mut self, event: IndexedEvent) {
         #[cfg(feature = "dapp-radar")]
         if let Some(user) = event.user {
-            self.dapp_radar.push_event(user, event.timestamp);
+            self.dapp_radar
+                .push_event(event.index, user, event.timestamp);
         }
     }
 }
