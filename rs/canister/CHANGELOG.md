@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 
+### Changed
+
+- Switch canister type to "rust" and use DFX to build it ([#77](https://github.com/open-chat-labs/event-store/pull/77))
+
 ### Fixed
 
 - Fix DappRadar event aggregation ([#76](https://github.com/open-chat-labs/event-store/pull/76))
