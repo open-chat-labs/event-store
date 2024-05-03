@@ -1,4 +1,4 @@
-use event_store_canister::TimestampMillis;
+use event_store_canister::IndexedEvent;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -13,13 +13,18 @@ pub struct DappRadarData {
 }
 
 impl DappRadarData {
-    pub fn push_event(&mut self, index: u64, user: String, timestamp: TimestampMillis) -> bool {
-        if index != self.next_event_index {
-            return false;
+    pub fn push_event(&mut self, event: &IndexedEvent) {
+        if event.index != self.next_event_index {
+            return;
         }
+        self.next_event_index = event.index + 1;
+
+        let Some(user) = event.user.clone() else {
+            return;
+        };
 
         let datetime =
-            time::OffsetDateTime::from_unix_timestamp((timestamp / 1000) as i64).unwrap();
+            time::OffsetDateTime::from_unix_timestamp((event.timestamp / 1000) as i64).unwrap();
 
         let year = datetime.year() as u32;
         let month = datetime.month() as u8;
@@ -35,9 +40,6 @@ impl DappRadarData {
         while self.hourly.len() > HOURLY_MAX_ENTRIES {
             self.hourly.pop_first();
         }
-
-        self.next_event_index = index + 1;
-        true
     }
 
     pub fn next_event_index(&self) -> u64 {
@@ -83,6 +85,10 @@ impl DappRadarData {
     }
 
     fn extract_page(all_results: Vec<DappRadarResponseEntry>, page: usize) -> DappRadarResponse {
+        if all_results.is_empty() {
+            return DappRadarResponse::default();
+        }
+
         let page_count = (((all_results.len() - 1) / PAGE_SIZE) + 1) as u32;
 
         DappRadarResponse {
@@ -105,7 +111,7 @@ pub struct EventsPerUser {
     per_user: BTreeMap<String, u32>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Default)]
 pub struct DappRadarResponse {
     results: Vec<DappRadarResponseEntry>,
     #[serde(rename = "pageCount")]
