@@ -10,13 +10,13 @@ pub struct StringToNumMap {
 }
 
 impl StringToNumMap {
-    pub fn convert_to_num(&mut self, string: String) -> u32 {
-        if let Some(i) = self.string_to_num.get(&string) {
+    pub fn convert_to_num(&mut self, string: &String) -> u32 {
+        if let Some(i) = self.string_to_num.get(string) {
             i
         } else {
             let i = self.num_to_string.len() as u32;
-            self.num_to_string.append(&string).unwrap();
-            self.string_to_num.insert(string, i);
+            self.num_to_string.append(string).unwrap();
+            self.string_to_num.insert(string.clone(), i);
             i
         }
     }

@@ -1,5 +1,6 @@
 use crate::env;
 use crate::model::events::Events;
+use crate::model::integrations_data::IntegrationsData;
 use crate::model::salt::Salt;
 use candid::Principal;
 use event_store_canister::{IdempotentEvent, Milliseconds, TimestampMillis, WhitelistedPrincipals};
@@ -20,6 +21,8 @@ pub struct State {
     #[serde(skip)]
     events: Events,
     event_deduper: EventDeduper,
+    #[serde(default)]
+    integrations_data: IntegrationsData,
     salt: Salt,
 }
 
@@ -60,6 +63,7 @@ impl State {
             time_granularity,
             events: Events::default(),
             event_deduper: EventDeduper::default(),
+            integrations_data: IntegrationsData::default(),
             salt: Salt::default(),
         }
     }
@@ -97,7 +101,19 @@ impl State {
                     .saturating_sub(event.timestamp % granularity);
             }
 
-            self.events.push(event, self.salt.get());
+            let indexed_event = self.events.push(event, self.salt.get());
+
+            self.integrations_data.push_event(indexed_event);
         }
+    }
+
+    #[allow(dead_code)]
+    pub fn integrations_data(&self) -> &IntegrationsData {
+        &self.integrations_data
+    }
+
+    #[allow(dead_code)]
+    pub fn integrations_data_mut(&mut self) -> &mut IntegrationsData {
+        &mut self.integrations_data
     }
 }

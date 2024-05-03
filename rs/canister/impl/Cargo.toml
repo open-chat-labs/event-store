@@ -15,8 +15,16 @@ event_store_canister.path = "../api"
 event_store_utils.path = "../../utils"
 ic-cdk.workspace = true
 ic-cdk-timers.workspace = true
+ic-http-certification.workspace = true
 ic-stable-structures.workspace = true
+querystring = { workspace = true, optional = true }
 rmp-serde.workspace = true
 serde.workspace = true
 serde_bytes.workspace = true
+serde_json = { workspace = true, optional = true }
 sha2.workspace = true
+time = { workspace = true, optional = true }
+
+[features]
+default = ["dapp-radar"]
+dapp-radar = ["querystring", "serde_json", "time"]
