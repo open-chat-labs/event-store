@@ -3,10 +3,14 @@ FROM ubuntu:22.04 as builder
 SHELL ["bash", "-c"]
 
 ARG git_commit_id
+ARG rustflags
 ARG rust_version=1.76.0
 
 ENV GIT_COMMIT_ID=$git_commit_id
 ENV TZ=UTC
+ENV DFX_VERSION=0.19.0
+ENV PATH="/root/.local/share/dfx/bin:$PATH"
+ENV RUSTFLAGS=$rustflags
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     apt -yq update && \
@@ -22,10 +26,9 @@ RUN curl --fail https://sh.rustup.rs -sSf \
     rustup default ${rust_version}-x86_64-unknown-linux-gnu && \
     rustup target add wasm32-unknown-unknown
 
-# Install IC Wasm
-RUN cargo install --version 0.7.1 ic-wasm
+RUN DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 
 COPY . /build
 WORKDIR /build
 
-RUN sh ./scripts/build-wasm.sh
+RUN dfx build --check
