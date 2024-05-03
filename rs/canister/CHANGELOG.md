@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 
+## [[0.3.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.3.0)] - 2024-05-03
+
 ### Changed
 
 - Switch canister type to "rust" and use DFX to build it ([#77](https://github.com/open-chat-labs/event-store/pull/77))

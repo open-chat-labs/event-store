@@ -496,7 +496,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_canister"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "candid",
  "serde",
@@ -505,7 +505,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_canister_impl"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "candid",
  "event_store_canister",
