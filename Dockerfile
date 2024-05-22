@@ -31,4 +31,4 @@ RUN DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/instal
 COPY . /build
 WORKDIR /build
 
-RUN dfx build --check
+RUN dfx build --ic --check
