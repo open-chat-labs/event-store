@@ -6,7 +6,7 @@ cd $SCRIPT_DIR/..
 
 TESTNAME=$1
 TEST_THREADS=${2:-2}
-POCKET_IC_SERVER_VERSION="3.0.0"
+POCKET_IC_SERVER_VERSION="4.0.0"
 
 if [[ $OSTYPE == "linux-gnu"* ]] || [[ $RUNNER_OS == "Linux" ]]
 then
@@ -20,7 +20,7 @@ else
 fi
 
 echo "Building canister wasm"
-cargo build --target wasm32-unknown-unknown --release -p event_store_canister_impl --locked
+dfx build event_store --ic --check
 
 cd rs/integration_tests
 echo "PocketIC download starting"

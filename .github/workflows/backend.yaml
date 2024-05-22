@@ -67,6 +67,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install DFX
+        uses: dfinity/setup-dfx@main
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
