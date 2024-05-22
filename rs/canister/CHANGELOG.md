@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 
+## [[0.4.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.4.0)] - 2024-05-22
+
 ### Changed
 
 - Update dependencies ([#79](https://github.com/open-chat-labs/event-store/pull/79))
