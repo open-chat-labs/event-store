@@ -24,7 +24,7 @@ docker build -t event_store --build-arg git_commit_id=$GIT_COMMIT_ID --build-arg
 container_id=$(docker create event_store)
 rm -rf wasms
 mkdir wasms
-docker cp $container_id:/build/.dfx/local/canisters/event_store/event_store.wasm.gz wasms
+docker cp $container_id:/build/.dfx/ic/canisters/event_store/event_store.wasm.gz wasms
 docker rm --volumes $container_id
 
 cd wasms
