@@ -19,7 +19,7 @@ done
 
 echo "CommitId: $GIT_COMMIT_ID"
 
-docker build -t event_store --build-arg git_commit_id=$GIT_COMMIT_ID --build-arg rustflags="$RUSTFLAGS" . || exit 1
+docker build -t event_store --build-arg git_commit_id=$GIT_COMMIT_ID --build-arg rustflags="$RUSTFLAGS" --platform linux/amd64 . || exit 1
 
 container_id=$(docker create event_store)
 rm -rf wasms
