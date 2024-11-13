@@ -7,11 +7,11 @@ type EventsResponse = record {
 type HttpRequest = record {
   url : text;
   method : text;
-  body : vec nat8;
+  body : blob;
   headers : vec record { text; text };
 };
 type HttpResponse = record {
-  body : vec nat8;
+  body : blob;
   headers : vec record { text; text };
   upgrade : opt bool;
   status_code : nat16;
@@ -21,7 +21,7 @@ type IdempotentEvent = record {
   name : text;
   user : opt Anonymizable;
   timestamp : nat64;
-  payload : vec nat8;
+  payload : blob;
   idempotency_key : nat;
 };
 type IndexedEvent = record {
@@ -30,7 +30,7 @@ type IndexedEvent = record {
   user : opt text;
   timestamp : nat64;
   index : nat64;
-  payload : vec nat8;
+  payload : blob;
 };
 type InitArgs = record {
   push_events_whitelist : vec principal;
