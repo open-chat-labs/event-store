@@ -220,9 +220,9 @@ dependencies = [
 
 [[package]]
 name = "candid"
-version = "0.10.10"
+version = "0.10.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c30ee7f886f296b6422c0ff017e89dd4f831521dfdcc76f3f71aae1ce817222"
+checksum = "d04aa85a9ba2542bded33d1eff0ffb17cb98b1be8117e0a25e1ad8c62bedc881"
 dependencies = [
  "anyhow",
  "binread",
@@ -530,7 +530,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_canister"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "candid",
  "serde",
@@ -539,7 +539,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_canister_impl"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -559,7 +559,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "event_store_canister",
  "ic_principal",
@@ -567,7 +567,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer_agent_runtime"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -578,7 +578,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer_cdk_runtime"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "event_store_canister",
  "event_store_consumer",
@@ -589,7 +589,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_producer"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "event_store_canister",
  "ic_principal",
@@ -600,7 +600,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_producer_agent_runtime"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -614,7 +614,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_producer_cdk_runtime"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "event_store_canister",
  "event_store_producer",
@@ -628,7 +628,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_utils"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "serde",
 ]
@@ -1113,9 +1113,9 @@ dependencies = [
 
 [[package]]
 name = "ic-stable-structures"
-version = "0.6.6"
+version = "0.6.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcaf89c1bc326c72498bcc0cd954f2edf718c018e7c586d2193d701d3c9af29a"
+checksum = "b492c5a16455ae78623eaa12ead96dda6c69a83c535b1b00789f19b381c8a24c"
 dependencies = [
  "ic_principal",
 ]
@@ -1351,7 +1351,7 @@ dependencies = [
 
 [[package]]
 name = "integration_tests"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -2155,9 +2155,9 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.215"
+version = "1.0.216"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6513c1ad0b11a9376da888e3e0baa0077f1aed55c17f50e7b2397136129fb88f"
+checksum = "0b9781016e935a97e8beecf0c933758c97a5520d32930e460142b4cd80c6338e"
 dependencies = [
  "serde_derive",
 ]
@@ -2183,9 +2183,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.215"
+version = "1.0.216"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad1e866f866923f252f05c889987993144fb74e722403468a4ebd70c3cd756c0"
+checksum = "46f859dbbf73865c6627ed570e78961cd3ac92407a2d117204c49232485da55e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2205,9 +2205,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.132"
+version = "1.0.133"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d726bfaff4b320266d395898905d0eba0345aae23b54aee3a737e260fd46db03"
+checksum = "c7fceb2473b9166b2294ef05efcb65a3db80803f0b03ef86a5fc88a2b85ee377"
 dependencies = [
  "itoa",
  "memchr",
@@ -2548,9 +2548,9 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.3.36"
+version = "0.3.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5dfd88e563464686c916c7e46e623e520ddc6d79fa6641390f2e3fa86e83e885"
+checksum = "35e7868883861bd0e56d9ac6efcaaca0d6d5d82a2a7ec8209ff492c07cf37b21"
 dependencies = [
  "deranged",
  "itoa",
@@ -2569,9 +2569,9 @@ checksum = "ef927ca75afb808a4d64dd374f00a2adf8d0fcff8e7b184af886c3c87ec4a3f3"
 
 [[package]]
 name = "time-macros"
-version = "0.2.18"
+version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f252a68540fde3a3877aeea552b832b40ab9a69e318efd078774a01ddee1ccf"
+checksum = "2834e6017e3e5e4b9834939793b282bc03b37a3336245fa820e35e233e2a85de"
 dependencies = [
  "num-conv",
  "time-core",
@@ -2604,9 +2604,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.41.1"
+version = "1.42.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22cfb5bee7a6a52939ca9224d6ac897bb669134078daa8735560897f69de4d33"
+checksum = "5cec9b21b0450273377fc97bd4c33a8acffc8c996c987a7c5b319a0083707551"
 dependencies = [
  "backtrace",
  "bytes",
@@ -2656,9 +2656,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-util"
-version = "0.7.12"
+version = "0.7.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61e7c3654c13bcd040d4a03abee2c75b1d14a37b423cf5a813ceae1cc903ec6a"
+checksum = "d7fcaa8d55a2bdd6b83ace262b016eca0d79ee02818c5c1bcdf0305114081078"
 dependencies = [
  "bytes",
  "futures-core",
@@ -2675,9 +2675,9 @@ checksum = "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3"
 
 [[package]]
 name = "tracing"
-version = "0.1.40"
+version = "0.1.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3523ab5a71916ccf420eebdf5521fcef02141234bbc0b8a49f2fdc4544364ef"
+checksum = "784e0ac535deb450455cbfa28a6f0df145ea1bb7ae51b821cf5e7927fdcfbdd0"
 dependencies = [
  "pin-project-lite",
  "tracing-attributes",
@@ -2698,9 +2698,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-attributes"
-version = "0.1.27"
+version = "0.1.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34704c8d6ebcbc939824180af020566b01a7c01f80641264eba0999f6c2b6be7"
+checksum = "395ae124c09f9e6918a2310af6038fba074bcf474ac352496d5910dd59a2226d"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2709,9 +2709,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-core"
-version = "0.1.32"
+version = "0.1.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c06d3da6113f116aaee68e4d601191614c9053067f9ab7f6edbcb161237daa54"
+checksum = "e672c95779cf947c5311f83787af4fa8fffd12fb27e4993211a84bdfd9610f9c"
 dependencies = [
  "once_cell",
  "valuable",
