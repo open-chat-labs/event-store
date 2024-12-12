@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 
-## [[0.5.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.4.0)] - 2024-09-02
+## [[0.6.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.6.0)] - 2024-12-12
+
+### Changed
+
+- Update Rust version + PocketIC + dependencies ([#88](https://github.com/open-chat-labs/event-store/pull/88))
+
+## [[0.5.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.5.0)] - 2024-09-02
 
 ### Changed
 
