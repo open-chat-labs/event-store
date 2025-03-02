@@ -8,6 +8,7 @@ use rand::rngs::StdRng;
 use rand::{random, Rng, SeedableRng};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::time::Duration;
+use ic_cdk::call::Call;
 use tracing::{error, trace};
 
 pub struct CdkRuntime {
@@ -36,7 +37,7 @@ impl Runtime for CdkRuntime {
         on_complete: F,
     ) {
         self.clear_timer();
-        ic_cdk::spawn(flush_async(canister_id, events, on_complete))
+        ic_cdk::futures::spawn(flush_async(canister_id, events, on_complete))
     }
 
     fn rng(&mut self) -> u128 {
@@ -55,7 +56,7 @@ async fn flush_async<F: FnOnce(FlushOutcome)>(
 ) {
     let events_len = events.len();
     if let Err(error) =
-        ic_cdk::call::<_, ()>(canister_id, "push_events", (PushEventsArgs { events },)).await
+        Call::unbounded_wait(canister_id, "push_events").with_arg(PushEventsArgs { events }).await
     {
         on_complete(FLUSH_OUTCOME_FAILED_SHOULD_RETRY);
         error!(%canister_id, events = events_len, ?error, "Failed to call 'push_events'");
