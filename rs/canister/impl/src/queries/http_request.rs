@@ -24,7 +24,10 @@ fn http_request(request: HttpRequest) -> HttpResponse {
 }
 
 #[cfg(feature = "dapp-radar")]
-pub fn process_dapp_radar_request(segments: Vec<&str>, qs: Option<String>) -> Option<HttpResponse<'static>> {
+pub fn process_dapp_radar_request(
+    segments: Vec<&str>,
+    qs: Option<String>,
+) -> Option<HttpResponse<'static>> {
     use std::str::FromStr;
 
     if segments.len() != 4 || segments[0] != "dapp-radar" || segments[1] != "aggregated-data" {
@@ -91,5 +94,7 @@ pub fn process_dapp_radar_request(segments: Vec<&str>, qs: Option<String>) -> Op
 }
 
 fn response_from_status_code<'a>(status_code: u16) -> HttpResponse<'a> {
-    HttpResponseBuilder::new().with_status_code(status_code.try_into().unwrap()).build()
+    HttpResponseBuilder::new()
+        .with_status_code(status_code.try_into().unwrap())
+        .build()
 }
