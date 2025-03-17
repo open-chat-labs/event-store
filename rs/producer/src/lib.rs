@@ -26,7 +26,6 @@ type ClientBuilder<R> = EventStoreClientBuilder<R>;
 
 #[derive(Serialize, Deserialize)]
 struct ClientInner<R> {
-    #[serde(alias = "event_sink_canister_id")]
     event_store_canister_id: Principal,
     runtime: R,
     flush_delay: Duration,
