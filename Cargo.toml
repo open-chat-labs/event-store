@@ -38,3 +38,7 @@ time = "0.3.37"
 tokio = "1.42.0"
 tokio-util = "0.7.13"
 tracing = "0.1.41"
+
+[patch.crates-io]
+ic-cdk = { git = "https://github.com/dfinity/cdk-rs", rev = "d0f4607aaf7f317ae3bc29461181e34c4405ce75" }
+ic-cdk-timers = { git = "https://github.com/dfinity/cdk-rs", rev = "d0f4607aaf7f317ae3bc29461181e34c4405ce75" }
