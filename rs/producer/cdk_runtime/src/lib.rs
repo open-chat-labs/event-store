@@ -2,6 +2,7 @@ use event_store_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
 use event_store_producer::{
     FlushOutcome, Runtime, FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS,
 };
+use ic_cdk::call::Call;
 use ic_cdk_timers::TimerId;
 use ic_principal::Principal;
 use rand::rngs::StdRng;
@@ -36,7 +37,7 @@ impl Runtime for CdkRuntime {
         on_complete: F,
     ) {
         self.clear_timer();
-        ic_cdk::spawn(flush_async(canister_id, events, on_complete))
+        ic_cdk::futures::spawn(flush_async(canister_id, events, on_complete))
     }
 
     fn rng(&mut self) -> u128 {
@@ -54,8 +55,9 @@ async fn flush_async<F: FnOnce(FlushOutcome)>(
     on_complete: F,
 ) {
     let events_len = events.len();
-    if let Err(error) =
-        ic_cdk::call::<_, ()>(canister_id, "push_events", (PushEventsArgs { events },)).await
+    if let Err(error) = Call::unbounded_wait(canister_id, "push_events")
+        .with_arg(PushEventsArgs { events })
+        .await
     {
         on_complete(FLUSH_OUTCOME_FAILED_SHOULD_RETRY);
         error!(%canister_id, events = events_len, ?error, "Failed to call 'push_events'");

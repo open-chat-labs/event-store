@@ -1,6 +1,6 @@
 use candid::{CandidType, Principal};
 use event_store_canister::{EventsArgs, EventsResponse, PushEventsArgs};
-use pocket_ic::{PocketIc, UserError, WasmResult};
+use pocket_ic::{PocketIc, RejectResponse};
 use serde::de::DeserializeOwned;
 
 pub fn events(
@@ -68,9 +68,11 @@ fn execute_update_no_response<P: CandidType>(
     .unwrap();
 }
 
-fn unwrap_response<R: CandidType + DeserializeOwned>(response: Result<WasmResult, UserError>) -> R {
-    match response.unwrap() {
-        WasmResult::Reply(bytes) => candid::decode_one(&bytes).unwrap(),
-        WasmResult::Reject(error) => panic!("{error}"),
+fn unwrap_response<R: CandidType + DeserializeOwned>(
+    response: Result<Vec<u8>, RejectResponse>,
+) -> R {
+    match response {
+        Ok(bytes) => candid::decode_one(&bytes).unwrap(),
+        Err(error) => panic!("{error}"),
     }
 }

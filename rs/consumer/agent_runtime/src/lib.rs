@@ -26,8 +26,9 @@ impl AgentRuntime {
             .await
         {
             Ok(response) => Ok(candid::decode_one(&response).unwrap()),
-            Err(AgentError::CertifiedReject(error)) | Err(AgentError::UncertifiedReject(error)) => {
-                Err((error.reject_code as i32, error.reject_message))
+            Err(AgentError::CertifiedReject { reject, .. })
+            | Err(AgentError::UncertifiedReject { reject, .. }) => {
+                Err((reject.reject_code as i32, reject.reject_message))
             }
             Err(error) => Err((0, error.to_string())),
         }

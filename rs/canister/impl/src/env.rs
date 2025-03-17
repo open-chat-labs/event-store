@@ -6,5 +6,5 @@ pub fn time() -> TimestampMillis {
 }
 
 pub fn caller() -> Principal {
-    ic_cdk::caller()
+    ic_cdk::api::msg_caller()
 }
