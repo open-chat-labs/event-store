@@ -1,5 +1,5 @@
 use ic_cdk::query;
-use ic_http_certification::{HttpRequest, HttpResponse};
+use ic_http_certification::{HttpRequest, HttpResponse, HttpResponseBuilder};
 
 #[query]
 fn http_request(request: HttpRequest) -> HttpResponse {
@@ -24,7 +24,7 @@ fn http_request(request: HttpRequest) -> HttpResponse {
 }
 
 #[cfg(feature = "dapp-radar")]
-pub fn process_dapp_radar_request(segments: Vec<&str>, qs: Option<String>) -> Option<HttpResponse> {
+pub fn process_dapp_radar_request(segments: Vec<&str>, qs: Option<String>) -> Option<HttpResponse<'static>> {
     use std::str::FromStr;
 
     if segments.len() != 4 || segments[0] != "dapp-radar" || segments[1] != "aggregated-data" {
@@ -78,22 +78,18 @@ pub fn process_dapp_radar_request(segments: Vec<&str>, qs: Option<String>) -> Op
 
     let body = serde_json::to_vec(&data).unwrap();
 
-    Some(HttpResponse {
-        status_code: 200,
-        headers: vec![
-            ("content-type".to_string(), "application/json".to_string()),
-            ("content-length".to_string(), body.len().to_string()),
-        ],
-        body,
-        upgrade: None,
-    })
+    Some(
+        HttpResponseBuilder::new()
+            .with_status_code(200.try_into().unwrap())
+            .with_headers(vec![
+                ("content-type".to_string(), "application/json".to_string()),
+                ("content-length".to_string(), body.len().to_string()),
+            ])
+            .with_body(body)
+            .build(),
+    )
 }
 
-fn response_from_status_code(status_code: u16) -> HttpResponse {
-    HttpResponse {
-        status_code,
-        headers: Vec::new(),
-        body: Vec::new(),
-        upgrade: None,
-    }
+fn response_from_status_code<'a>(status_code: u16) -> HttpResponse<'a> {
+    HttpResponseBuilder::new().with_status_code(status_code.try_into().unwrap()).build()
 }
