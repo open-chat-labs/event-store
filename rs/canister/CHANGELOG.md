@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 
-- Bump CDK version ([#91](https://github.com/open-chat-labs/event-store/pull/91))
+- Bump CDK to 0.18.0-alpha.1 + update other dependencies ([#91](https://github.com/open-chat-labs/event-store/pull/91))
 
 ## [[0.6.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.6.0)] - 2024-12-12
 
