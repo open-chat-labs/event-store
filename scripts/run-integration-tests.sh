@@ -6,7 +6,7 @@ cd $SCRIPT_DIR/..
 
 TESTNAME=$1
 TEST_THREADS=${2:-2}
-POCKET_IC_SERVER_VERSION="8.0.0"
+POCKET_IC_SERVER_VERSION="9.0.0"
 
 if [[ $OSTYPE == "linux-gnu"* ]] || [[ $RUNNER_OS == "Linux" ]]
 then
