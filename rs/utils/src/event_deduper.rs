@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use std::collections::btree_map::Entry::Vacant;
 use std::collections::BTreeMap;
+use std::collections::btree_map::Entry::Vacant;
 
 const DEFAULT_WINDOW_DURATION: Milliseconds = 60 * 60 * 1000; // 1 hour
 
