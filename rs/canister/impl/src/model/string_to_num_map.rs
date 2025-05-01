@@ -1,6 +1,6 @@
 use crate::memory::{
-    get_num_to_string_data_memory, get_num_to_string_index_memory, get_string_to_num_map_memory,
-    Memory,
+    Memory, get_num_to_string_data_memory, get_num_to_string_index_memory,
+    get_string_to_num_map_memory,
 };
 use ic_stable_structures::{StableBTreeMap, StableLog};
 

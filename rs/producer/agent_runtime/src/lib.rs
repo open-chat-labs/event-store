@@ -1,6 +1,6 @@
 use event_store_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
 use event_store_producer::{
-    FlushOutcome, Runtime, FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS,
+    FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS, FlushOutcome, Runtime,
 };
 use ic_agent::Agent;
 use ic_principal::Principal;

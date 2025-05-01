@@ -1,12 +1,12 @@
 use event_store_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
 use event_store_producer::{
-    FlushOutcome, Runtime, FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS,
+    FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS, FlushOutcome, Runtime,
 };
 use ic_cdk::call::Call;
 use ic_cdk_timers::TimerId;
 use ic_principal::Principal;
 use rand::rngs::StdRng;
-use rand::{random, Rng, SeedableRng};
+use rand::{Rng, SeedableRng, random};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::time::Duration;
 use tracing::{error, trace};

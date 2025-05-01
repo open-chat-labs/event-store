@@ -23,10 +23,6 @@ impl IntegrationsData {
             index = std::cmp::min(index, self.dapp_radar.next_event_index());
         }
 
-        if index == u64::MAX {
-            None
-        } else {
-            Some(index)
-        }
+        if index == u64::MAX { None } else { Some(index) }
     }
 }
