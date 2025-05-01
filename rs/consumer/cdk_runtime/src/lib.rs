@@ -21,6 +21,7 @@ impl CdkRuntime {
             Ok(response) => response
                 .candid()
                 .map_err(|e| (0, format!("Failed to deserialize response: {e}"))),
+            Err(CallFailed::InsufficientLiquidCycleBalance(e)) => Err((0, e.to_string())),
             Err(CallFailed::CallPerformFailed(f)) => Err((0, f.to_string())),
             Err(CallFailed::CallRejected(r)) => {
                 Err((r.raw_reject_code() as i32, r.reject_message().to_string()))

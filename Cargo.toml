@@ -20,8 +20,8 @@ edition = "2021"
 [workspace.dependencies]
 candid = "0.10.13"
 ic-agent = "0.40.0"
-ic-cdk = "0.18.0-alpha.1"
-ic-cdk-timers = "0.12.0-alpha.1"
+ic-cdk = "0.18.0"
+ic-cdk-timers = "0.12.0"
 ic-http-certification = "3.0.3"
 ic_principal = "0.1.1"
 ic-stable-structures = "0.6.8"
@@ -38,7 +38,3 @@ time = "0.3.39"
 tokio = "1.44.1"
 tokio-util = "0.7.14"
 tracing = "0.1.41"
-
-[patch.crates-io]
-ic-cdk = { git = "https://github.com/dfinity/cdk-rs", rev = "d0f4607aaf7f317ae3bc29461181e34c4405ce75" }
-ic-cdk-timers = { git = "https://github.com/dfinity/cdk-rs", rev = "d0f4607aaf7f317ae3bc29461181e34c4405ce75" }
