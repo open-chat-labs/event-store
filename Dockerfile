@@ -4,11 +4,11 @@ SHELL ["bash", "-c"]
 
 ARG git_commit_id
 ARG rustflags
-ARG rust_version=1.82.0
+ARG rust_version=1.86.0
 
 ENV GIT_COMMIT_ID=$git_commit_id
 ENV TZ=UTC
-ENV DFX_VERSION=0.22.0
+ENV DFX_VERSION=0.26.0
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
 ENV RUSTFLAGS=$rustflags
 
