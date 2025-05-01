@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Bump CDK to 0.18.0 + update other dependencies ([#91](https://github.com/open-chat-labs/event-store/pull/91))
 - Bump Rust to v1.86.0 and to the 2024 edition ([#92](https://github.com/open-chat-labs/event-store/pull/92))
+- Bump DFX + bump Rust version within Dockerfile ([#93](https://github.com/open-chat-labs/event-store/pull/93))
 
 ## [[0.6.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.6.0)] - 2024-12-12
 
