@@ -109,7 +109,7 @@ pub trait Runtime {
     fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, delay: Duration, callback: F);
     fn flush<F: FnOnce(FlushOutcome) + Send + 'static>(
         &mut self,
-        event_sync_canister_id: Principal,
+        event_store_canister_id: Principal,
         events: Vec<IdempotentEvent>,
         on_complete: F,
     );
@@ -385,7 +385,7 @@ impl Runtime for NullRuntime {
 
     fn flush<F: FnOnce(FlushOutcome) + Send + 'static>(
         &mut self,
-        _event_sync_canister_id: Principal,
+        _event_store_canister_id: Principal,
         _events: Vec<IdempotentEvent>,
         on_complete: F,
     ) {

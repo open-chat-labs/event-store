@@ -13,11 +13,10 @@ fn init(args: InitArgs) {
     ));
 
     ic_cdk_timers::set_timer(Duration::ZERO, || {
-        ic_cdk::spawn(async {
-            let salt: [u8; 32] = ic_cdk::api::management_canister::main::raw_rand()
+        ic_cdk::futures::spawn(async {
+            let salt: [u8; 32] = ic_cdk::management_canister::raw_rand()
                 .await
                 .unwrap()
-                .0
                 .try_into()
                 .unwrap();
 

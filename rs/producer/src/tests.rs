@@ -94,7 +94,7 @@ impl Runtime for TestRuntime {
 
     fn flush<F: FnOnce(FlushOutcome) + Send + 'static>(
         &mut self,
-        _event_sync_canister_id: Principal,
+        _event_store_canister_id: Principal,
         _events: Vec<IdempotentEvent>,
         on_complete: F,
     ) {
