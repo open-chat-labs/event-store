@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [[0.7.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.7.0)] - 2025-05-01
 
+### Changed
+
 - Bump CDK to 0.18.0 + update other dependencies ([#91](https://github.com/open-chat-labs/event-store/pull/91))
 - Bump Rust to v1.86.0 and to the 2024 edition ([#92](https://github.com/open-chat-labs/event-store/pull/92))
 
