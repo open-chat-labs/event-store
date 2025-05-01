@@ -41,7 +41,7 @@ impl Runtime for CdkRuntime {
     }
 
     fn rng(&mut self) -> u128 {
-        self.rng.gen()
+        self.rng.r#gen()
     }
 
     fn now(&self) -> TimestampMillis {

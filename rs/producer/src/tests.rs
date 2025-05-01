@@ -137,7 +137,6 @@ impl TestRuntime {
         guard
             .callback_due_at
             .filter(|ts| *ts <= guard.timestamp)
-            .take()
             .and_then(|_| guard.callback.take())
     }
 }

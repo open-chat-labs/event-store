@@ -7,7 +7,9 @@ pub static POCKET_IC_BIN: &str = "./pocket-ic";
 pub fn setup_new_env() -> PocketIc {
     let path = match env::var_os("POCKET_IC_BIN") {
         None => {
-            env::set_var("POCKET_IC_BIN", POCKET_IC_BIN);
+            unsafe {
+                env::set_var("POCKET_IC_BIN", POCKET_IC_BIN);
+            }
             POCKET_IC_BIN.to_string()
         }
         Some(path) => path
