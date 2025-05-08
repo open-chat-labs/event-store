@@ -685,8 +685,8 @@ name = "event_store_canister"
 version = "0.7.0"
 dependencies = [
  "candid",
+ "event_store_types",
  "serde",
- "serde_bytes",
 ]
 
 [[package]]
@@ -695,6 +695,7 @@ version = "0.7.0"
 dependencies = [
  "candid",
  "event_store_canister",
+ "event_store_types",
  "event_store_utils",
  "ic-cdk",
  "ic-cdk-timers",
@@ -743,10 +744,9 @@ dependencies = [
 name = "event_store_producer"
 version = "0.7.0"
 dependencies = [
- "event_store_canister",
+ "event_store_types",
  "ic_principal",
  "serde",
- "serde_json",
  "test-case",
 ]
 
@@ -757,6 +757,7 @@ dependencies = [
  "candid",
  "event_store_canister",
  "event_store_producer",
+ "event_store_types",
  "ic-agent",
  "ic_principal",
  "rand",
@@ -770,12 +771,23 @@ version = "0.7.0"
 dependencies = [
  "event_store_canister",
  "event_store_producer",
+ "event_store_types",
  "ic-cdk",
  "ic-cdk-timers",
  "ic_principal",
  "rand",
  "serde",
  "tracing",
+]
+
+[[package]]
+name = "event_store_types"
+version = "0.7.0"
+dependencies = [
+ "candid",
+ "serde",
+ "serde_bytes",
+ "serde_json",
 ]
 
 [[package]]
@@ -1567,6 +1579,7 @@ version = "0.7.0"
 dependencies = [
  "candid",
  "event_store_canister",
+ "event_store_types",
  "pocket-ic",
  "rand",
  "serde",

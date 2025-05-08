@@ -1,7 +1,7 @@
 use crate::memory::{Memory, get_events_data_memory, get_events_index_memory};
 use crate::model::string_to_num_map::StringToNumMap;
 use candid::Deserialize;
-use event_store_canister::{Anonymizable, IdempotentEvent, IndexedEvent, TimestampMillis};
+use event_store_types::{Anonymizable, IdempotentEvent, IndexedEvent, TimestampMillis};
 use ic_stable_structures::storable::Bound;
 use ic_stable_structures::{StableLog, Storable};
 use serde::Serialize;

@@ -8,6 +8,7 @@ edition.workspace = true
 [dependencies]
 event_store_canister.path = "../../canister/api"
 event_store_producer.path = ".."
+event_store_types.path = "../../types"
 ic-cdk.workspace = true
 ic-cdk-timers.workspace = true
 ic_principal.workspace = true

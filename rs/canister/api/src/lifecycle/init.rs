@@ -1,5 +1,5 @@
-use crate::Milliseconds;
 use candid::{CandidType, Deserialize, Principal};
+use event_store_types::Milliseconds;
 use serde::Serialize;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]

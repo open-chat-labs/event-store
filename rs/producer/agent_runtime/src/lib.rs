@@ -1,7 +1,8 @@
-use event_store_canister::{IdempotentEvent, PushEventsArgs, TimestampMillis};
+use event_store_canister::PushEventsArgs;
 use event_store_producer::{
     FLUSH_OUTCOME_FAILED_SHOULD_RETRY, FLUSH_OUTCOME_SUCCESS, FlushOutcome, Runtime,
 };
+use event_store_types::{IdempotentEvent, TimestampMillis};
 use ic_agent::Agent;
 use ic_principal::Principal;
 use rand::random;
