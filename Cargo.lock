@@ -757,7 +757,6 @@ dependencies = [
  "candid",
  "event_store_canister",
  "event_store_producer",
- "event_store_types",
  "ic-agent",
  "ic_principal",
  "rand",
@@ -771,7 +770,6 @@ version = "0.8.0"
 dependencies = [
  "event_store_canister",
  "event_store_producer",
- "event_store_types",
  "ic-cdk",
  "ic-cdk-timers",
  "ic_principal",
