@@ -1,9 +1,10 @@
-use event_store_types::{Event, IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Duration;
 use std::{mem, thread};
+
+pub use event_store_types::{Event, EventBuilder, IdempotentEvent, TimestampMillis};
 
 #[cfg(test)]
 mod tests;
