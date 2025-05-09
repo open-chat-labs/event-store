@@ -121,15 +121,15 @@ impl Anonymizable {
     }
 }
 
-impl IdempotentEvent {
-    pub fn new(event: Event, idempotency_key: u128) -> IdempotentEvent {
+impl Event {
+    pub fn to_idempotent(self, idempotency_key: u128) -> IdempotentEvent {
         IdempotentEvent {
             idempotency_key,
-            name: event.name,
-            timestamp: event.timestamp,
-            user: event.user,
-            source: event.source,
-            payload: event.payload,
+            name: self.name,
+            timestamp: self.timestamp,
+            user: self.user,
+            source: self.source,
+            payload: self.payload,
         }
     }
 }

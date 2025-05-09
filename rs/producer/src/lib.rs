@@ -132,9 +132,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
     pub fn push(&mut self, event: Event) {
         let mut guard = self.inner.try_lock().unwrap();
         let idempotency_key = guard.runtime.rng();
-        guard
-            .events
-            .push(IdempotentEvent::new(event, idempotency_key));
+        guard.events.push(event.to_idempotent(idempotency_key));
         self.process_events(guard, true);
     }
 
@@ -142,9 +140,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
         let mut guard = self.inner.try_lock().unwrap();
         for event in events {
             let idempotency_key = guard.runtime.rng();
-            guard
-                .events
-                .push(IdempotentEvent::new(event, idempotency_key));
+            guard.events.push(event.to_idempotent(idempotency_key));
         }
         self.process_events(guard, can_flush_immediately);
     }
