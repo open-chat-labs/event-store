@@ -682,7 +682,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_canister"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "candid",
  "event_store_types",
@@ -691,7 +691,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_canister_impl"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -712,7 +712,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "event_store_canister",
  "ic_principal",
@@ -720,7 +720,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer_agent_runtime"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -731,7 +731,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer_cdk_runtime"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "event_store_canister",
  "event_store_consumer",
@@ -742,7 +742,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_producer"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "event_store_types",
  "ic_principal",
@@ -752,7 +752,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_producer_agent_runtime"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -767,7 +767,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_producer_cdk_runtime"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "event_store_canister",
  "event_store_producer",
@@ -782,7 +782,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_types"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "candid",
  "serde",
@@ -792,7 +792,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_utils"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "serde",
 ]
@@ -1575,7 +1575,7 @@ dependencies = [
 
 [[package]]
 name = "integration_tests"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "candid",
  "event_store_canister",

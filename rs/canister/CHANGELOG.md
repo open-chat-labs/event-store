@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 
+## [[0.8.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.8.0)] - 2025-05-09
+
+### Changed
+
+- Split types into separate package ([#91](https://github.com/open-chat-labs/event-store/pull/91))
+
 ## [[0.7.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.7.0)] - 2025-05-01
 
 ### Changed
