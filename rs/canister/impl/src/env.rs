@@ -1,5 +1,5 @@
 use candid::Principal;
-use event_store_canister::TimestampMillis;
+use event_store_types::TimestampMillis;
 
 pub fn time() -> TimestampMillis {
     ic_cdk::api::time() / 1_000_000

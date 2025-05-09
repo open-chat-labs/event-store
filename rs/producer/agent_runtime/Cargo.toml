@@ -9,6 +9,7 @@ edition.workspace = true
 candid.workspace = true
 event_store_canister.path = "../../canister/api"
 event_store_producer.path = ".."
+event_store_types.path = "../../types"
 ic-agent.workspace = true
 ic_principal.workspace = true
 rand.workspace = true

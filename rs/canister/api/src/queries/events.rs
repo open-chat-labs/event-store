@@ -1,5 +1,5 @@
-use crate::IndexedEvent;
 use candid::CandidType;
+use event_store_types::IndexedEvent;
 use serde::{Deserialize, Serialize};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]

@@ -1,4 +1,4 @@
-use event_store_canister::{Anonymizable, IdempotentEvent, TimestampMillis};
+use event_store_types::{Event, IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -35,74 +35,6 @@ struct ClientInner<R> {
     next_flush_scheduled: Option<TimestampMillis>,
     flush_in_progress: bool,
     total_events_flushed: u64,
-}
-
-pub struct Event {
-    name: String,
-    timestamp: TimestampMillis,
-    user: Option<Anonymizable>,
-    source: Option<Anonymizable>,
-    payload: Vec<u8>,
-}
-
-pub struct EventBuilder {
-    name: String,
-    timestamp: TimestampMillis,
-    user: Option<Anonymizable>,
-    source: Option<Anonymizable>,
-    payload: Vec<u8>,
-}
-
-impl EventBuilder {
-    pub fn new(name: impl Into<String>, timestamp: TimestampMillis) -> Self {
-        Self {
-            name: name.into(),
-            timestamp,
-            user: None,
-            source: None,
-            payload: Vec::new(),
-        }
-    }
-
-    pub fn with_user(mut self, user: impl Into<String>, anonymize: bool) -> Self {
-        self.user = Some(Anonymizable::new(user.into(), anonymize));
-        self
-    }
-
-    pub fn with_maybe_user(mut self, user: Option<impl Into<String>>, anonymize: bool) -> Self {
-        self.user = user.map(|u| Anonymizable::new(u.into(), anonymize));
-        self
-    }
-
-    pub fn with_source(mut self, source: impl Into<String>, anonymize: bool) -> Self {
-        self.source = Some(Anonymizable::new(source.into(), anonymize));
-        self
-    }
-
-    pub fn with_maybe_source(mut self, source: Option<impl Into<String>>, anonymize: bool) -> Self {
-        self.source = source.map(|u| Anonymizable::new(u.into(), anonymize));
-        self
-    }
-
-    pub fn with_payload(mut self, payload: Vec<u8>) -> Self {
-        self.payload = payload;
-        self
-    }
-
-    #[cfg(feature = "json")]
-    pub fn with_json_payload<P: Serialize>(self, payload: &P) -> Self {
-        self.with_payload(serde_json::to_vec(payload).unwrap())
-    }
-
-    pub fn build(self) -> Event {
-        Event {
-            name: self.name,
-            timestamp: self.timestamp,
-            user: self.user,
-            source: self.source,
-            payload: self.payload,
-        }
-    }
 }
 
 pub trait Runtime {
@@ -200,14 +132,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
     pub fn push(&mut self, event: Event) {
         let mut guard = self.inner.try_lock().unwrap();
         let idempotency_key = guard.runtime.rng();
-        guard.events.push(IdempotentEvent {
-            idempotency_key,
-            name: event.name,
-            timestamp: event.timestamp,
-            user: event.user,
-            source: event.source,
-            payload: event.payload,
-        });
+        guard.events.push(event.to_idempotent(idempotency_key));
         self.process_events(guard, true);
     }
 
@@ -215,14 +140,7 @@ impl<R: Runtime + Send + 'static> Client<R> {
         let mut guard = self.inner.try_lock().unwrap();
         for event in events {
             let idempotency_key = guard.runtime.rng();
-            guard.events.push(IdempotentEvent {
-                idempotency_key,
-                name: event.name,
-                timestamp: event.timestamp,
-                user: event.user,
-                source: event.source,
-                payload: event.payload,
-            });
+            guard.events.push(event.to_idempotent(idempotency_key));
         }
         self.process_events(guard, can_flush_immediately);
     }
@@ -398,17 +316,5 @@ impl Runtime for NullRuntime {
 
     fn now(&self) -> TimestampMillis {
         0
-    }
-}
-
-impl From<IdempotentEvent> for Event {
-    fn from(value: IdempotentEvent) -> Self {
-        Event {
-            name: value.name,
-            timestamp: value.timestamp,
-            user: value.user,
-            source: value.source,
-            payload: value.payload,
-        }
     }
 }

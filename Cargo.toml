@@ -9,6 +9,7 @@ members = [
     "rs/producer/agent_runtime",
     "rs/producer/cdk_runtime",
     "rs/integration_tests",
+    "rs/types",
     "rs/utils",
 ]
 resolver = "2"

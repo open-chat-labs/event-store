@@ -2,9 +2,8 @@
 use crate::rng::{random, random_bytes, random_principal, random_string};
 use crate::setup::setup_new_env;
 use candid::Principal;
-use event_store_canister::{
-    Anonymizable, EventsArgs, IdempotentEvent, InitArgs, Milliseconds, PushEventsArgs,
-};
+use event_store_canister::{EventsArgs, InitArgs, PushEventsArgs};
+use event_store_types::{Anonymizable, IdempotentEvent, Milliseconds};
 use pocket_ic::PocketIc;
 use std::fs::File;
 use std::io::Read;

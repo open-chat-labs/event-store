@@ -7,5 +7,5 @@ edition.workspace = true
 
 [dependencies]
 candid.workspace = true
+event_store_types.path = "../../types"
 serde.workspace = true
-serde_bytes.workspace = true

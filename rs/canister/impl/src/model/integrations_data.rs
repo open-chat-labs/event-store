@@ -1,4 +1,4 @@
-use event_store_canister::IndexedEvent;
+use event_store_types::IndexedEvent;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default)]

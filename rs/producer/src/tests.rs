@@ -1,5 +1,5 @@
-use crate::{ClientBuilder, EventBuilder, FlushOutcome, Runtime};
-use event_store_canister::{IdempotentEvent, TimestampMillis};
+use crate::{ClientBuilder, FlushOutcome, Runtime};
+use event_store_types::{EventBuilder, IdempotentEvent, TimestampMillis};
 use ic_principal::Principal;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::thread;

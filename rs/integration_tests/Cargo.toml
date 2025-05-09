@@ -8,6 +8,7 @@ edition.workspace = true
 [dev-dependencies]
 candid.workspace = true
 event_store_canister.path = "../canister/api"
+event_store_types.path = "../types"
 pocket-ic.workspace = true
 rand.workspace = true
 serde.workspace = true
