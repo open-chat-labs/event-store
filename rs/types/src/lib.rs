@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 pub type Milliseconds = u64;
 pub type TimestampMillis = u64;
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct Event {
     name: String,
     timestamp: TimestampMillis,

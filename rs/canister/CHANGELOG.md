@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 
+## [[0.10.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.10.0)] - 2025-05-09
+
+### Changed
+
+- Derive `CandidType`, `Serialize`, `Clone` and `Debug` for `Event` ([#100](https://github.com/open-chat-labs/event-store/pull/100))
+
 ## [[0.9.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.9.0)] - 2025-05-09
 
 ### Changed
