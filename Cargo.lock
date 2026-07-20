@@ -765,7 +765,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_canister"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "candid",
  "event_store_types",
@@ -774,7 +774,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_canister_impl"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -796,7 +796,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "event_store_canister",
  "ic_principal",
@@ -804,7 +804,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer_agent_runtime"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "candid",
  "event_store_canister",
@@ -815,7 +815,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_consumer_cdk_runtime"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "event_store_canister",
  "event_store_consumer",
@@ -826,7 +826,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_producer"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "event_store_types",
  "ic_principal",
@@ -836,35 +836,35 @@ dependencies = [
 
 [[package]]
 name = "event_store_producer_agent_runtime"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "candid",
  "event_store_canister",
  "event_store_producer",
  "ic-agent",
  "ic_principal",
- "rand 0.8.7",
+ "rand 0.10.2",
  "tokio",
  "tokio-util",
 ]
 
 [[package]]
 name = "event_store_producer_cdk_runtime"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "event_store_canister",
  "event_store_producer",
  "ic-cdk",
  "ic-cdk-timers",
  "ic_principal",
- "rand 0.8.7",
+ "rand 0.10.2",
  "serde",
  "tracing",
 ]
 
 [[package]]
 name = "event_store_types"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "candid",
  "serde",
@@ -874,7 +874,7 @@ dependencies = [
 
 [[package]]
 name = "event_store_utils"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "serde",
 ]
@@ -1671,13 +1671,13 @@ dependencies = [
 
 [[package]]
 name = "integration_tests"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "candid",
  "event_store_canister",
  "event_store_types",
  "pocket-ic",
- "rand 0.8.7",
+ "rand 0.10.2",
  "serde",
  "test-case",
 ]
@@ -3202,9 +3202,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.53.0"
+version = "1.53.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d988bcd52dbe076d3d46903332f58c912b87a2c49b1428419a5845154762ffee"
+checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
 dependencies = [
  "bytes",
  "libc",
@@ -3740,18 +3740,18 @@ dependencies = [
 
 [[package]]
 name = "zerocopy"
-version = "0.8.54"
+version = "0.8.55"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7cbbc0a705a0fd05cc3676525980d2bf5a9bc4adac6d6475209a7887cf59d19"
+checksum = "b5a105cd7b140f6eeec8acff2ea38135d3cab283ada58540f629fe51e46696eb"
 dependencies = [
  "zerocopy-derive",
 ]
 
 [[package]]
 name = "zerocopy-derive"
-version = "0.8.54"
+version = "0.8.55"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2e817b7b52d0c7358d3246da9d69935ebb18116b2b102b4230dac079b4862f5"
+checksum = "0fe976fb70c78cd64cccfe3a6fc142244e8a77b70959b30faf9d0ac37ee228eb"
 dependencies = [
  "proc-macro2",
  "quote",

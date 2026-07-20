@@ -11,6 +11,11 @@ event_store_producer.path = ".."
 ic-cdk.workspace = true
 ic-cdk-timers.workspace = true
 ic_principal.workspace = true
-rand.workspace = true
+# `std_rng` alone avoids getrandom, which refuses to build for wasm32-unknown-unknown. On wasm the
+# rng is seeded from the canister id + time; only the off-wasm `random()` needs `thread_rng`.
+rand = { workspace = true, default-features = false, features = ["std_rng"] }
 serde.workspace = true
 tracing.workspace = true
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+rand = { workspace = true, features = ["std_rng", "thread_rng"] }

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 
+## [[0.12.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.11.0)] - 2026-07-20
+
+### Changed
+
+- Fix wasm build and bump `rand` ([#102](https://github.com/open-chat-labs/event-store/pull/102))
+
 ## [[0.11.0](https://github.com/open-chat-labs/event-store/releases/tag/v0.11.0)] - 2026-07-20
 
 ### Changed
