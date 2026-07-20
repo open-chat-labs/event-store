@@ -20,10 +20,10 @@ fn post_upgrade() {
 
 fn run_job_to_populate_integrations_data_if_required() {
     state::read(|s| {
-        if let Some(next) = s.integrations_data().next_event_index() {
-            if s.events().stats().latest_event_index > Some(next) {
-                ic_cdk_timers::set_timer(Duration::ZERO, populate_integrations_data);
-            }
+        if let Some(next) = s.integrations_data().next_event_index()
+            && s.events().stats().latest_event_index > Some(next)
+        {
+            ic_cdk_timers::set_timer(Duration::ZERO, async { populate_integrations_data() });
         }
     });
 }

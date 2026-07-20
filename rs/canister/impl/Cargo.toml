@@ -15,6 +15,7 @@ event_store_canister.path = "../api"
 event_store_types.path = "../../types"
 event_store_utils.path = "../../utils"
 ic-cdk.workspace = true
+ic-cdk-management-canister.workspace = true
 ic-cdk-timers.workspace = true
 ic-http-certification.workspace = true
 ic-stable-structures.workspace = true

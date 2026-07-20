@@ -44,5 +44,4 @@ fn init_num_to_string() -> StableLog<String, Memory, Memory> {
         get_num_to_string_index_memory(),
         get_num_to_string_data_memory(),
     )
-    .unwrap()
 }

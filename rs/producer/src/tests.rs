@@ -66,7 +66,7 @@ impl TestRuntime {
         }
     }
 
-    fn inner(&self) -> MutexGuard<TestRuntimeInner> {
+    fn inner(&self) -> MutexGuard<'_, TestRuntimeInner> {
         self.inner.try_lock().unwrap()
     }
 }

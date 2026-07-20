@@ -12,15 +12,13 @@ fn init(args: InitArgs) {
         args.time_granularity,
     ));
 
-    ic_cdk_timers::set_timer(Duration::ZERO, || {
-        ic_cdk::futures::spawn(async {
-            let salt: [u8; 32] = ic_cdk::management_canister::raw_rand()
-                .await
-                .unwrap()
-                .try_into()
-                .unwrap();
+    ic_cdk_timers::set_timer(Duration::ZERO, async {
+        let salt: [u8; 32] = ic_cdk_management_canister::raw_rand()
+            .await
+            .unwrap()
+            .try_into()
+            .unwrap();
 
-            state::mutate(|s| s.set_salt(salt));
-        })
+        state::mutate(|s| s.set_salt(salt));
     });
 }

@@ -26,7 +26,7 @@ pub fn setup_new_env() -> PocketIc {
 
         Running the testing script will automatically place the PocketIC binary at the right place to be run without setting the POCKET_IC_BIN environment variable:
             ./scripts/run-integration-tests.sh
-        ", &path, &env::current_dir().map(|x| x.display().to_string()).unwrap_or_else(|_| "an unknown directory".to_string()));
+        ", path, env::current_dir().map(|x| x.display().to_string()).unwrap_or_else(|_| "an unknown directory".to_string()));
     }
 
     PocketIcBuilder::new().with_application_subnet().build()
