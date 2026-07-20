@@ -94,7 +94,7 @@ impl Default for Events {
 }
 
 fn init_events() -> StableLog<StorableEvent, Memory, Memory> {
-    StableLog::init(get_events_index_memory(), get_events_data_memory()).unwrap()
+    StableLog::init(get_events_index_memory(), get_events_data_memory())
 }
 
 pub struct EventsStats {
@@ -123,8 +123,12 @@ struct StorableEvent {
 }
 
 impl Storable for StorableEvent {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(rmp_serde::to_vec_named(&self).unwrap())
+    }
+
+    fn into_bytes(self) -> Vec<u8> {
+        rmp_serde::to_vec_named(&self).unwrap()
     }
 
     fn from_bytes(bytes: Cow<[u8]>) -> Self {

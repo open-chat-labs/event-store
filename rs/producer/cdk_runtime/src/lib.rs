@@ -28,7 +28,8 @@ impl CdkRuntime {
 impl Runtime for CdkRuntime {
     fn schedule_flush<F: FnOnce() + Send + 'static>(&mut self, delay: Duration, callback: F) {
         self.clear_timer();
-        self.scheduled_flush_timer = Some(ic_cdk_timers::set_timer(delay, callback));
+        self.scheduled_flush_timer =
+            Some(ic_cdk_timers::set_timer(delay, async move { callback() }));
     }
 
     fn flush<F: FnOnce(FlushOutcome) + Send + 'static>(

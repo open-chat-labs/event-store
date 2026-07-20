@@ -231,9 +231,10 @@ fn install_canister(init_args: Option<InitArgs>) -> TestEnv {
         Some(controller),
     );
 
-    // Tick twice to initialize the `salt`
-    env.tick();
-    env.tick();
+    // Tick until the `raw_rand` call made by the init timer completes and the `salt` is set
+    for _ in 0..5 {
+        env.tick();
+    }
 
     TestEnv {
         env,
