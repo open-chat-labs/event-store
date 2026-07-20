@@ -6,8 +6,10 @@ use event_store_producer::{
 use ic_cdk::call::Call;
 use ic_cdk_timers::TimerId;
 use ic_principal::Principal;
+#[cfg(not(target_arch = "wasm32"))]
+use rand::random;
 use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng, random};
+use rand::{RngExt, SeedableRng};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::time::Duration;
 use tracing::{error, trace};
@@ -43,7 +45,7 @@ impl Runtime for CdkRuntime {
     }
 
     fn rng(&mut self) -> u128 {
-        self.rng.r#gen()
+        self.rng.random()
     }
 
     fn now(&self) -> TimestampMillis {
@@ -80,11 +82,14 @@ impl Default for CdkRuntime {
 
 #[cfg(target_arch = "wasm32")]
 fn rng_seed() -> [u8; 32] {
+    // The canister id can be up to 29 bytes, so cap it at 24 to ensure it can never overlap with
+    // the timestamp which occupies the final 8 bytes
     let mut seed = [0; 32];
-    let mut bytes = Vec::new();
-    bytes.extend_from_slice(ic_cdk::id().as_slice());
-    bytes.extend_from_slice(&ic_cdk::api::time().to_be_bytes());
-    seed[..bytes.len()].copy_from_slice(&bytes);
+    let canister_id = ic_cdk::api::canister_self();
+    let id_bytes = canister_id.as_slice();
+    let id_len = id_bytes.len().min(24);
+    seed[..id_len].copy_from_slice(&id_bytes[..id_len]);
+    seed[24..].copy_from_slice(&ic_cdk::api::time().to_be_bytes());
     seed
 }
 

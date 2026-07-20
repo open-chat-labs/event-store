@@ -11,7 +11,7 @@ event_store_canister.path = "../../canister/api"
 event_store_producer.path = ".."
 ic-agent.workspace = true
 ic_principal.workspace = true
-rand.workspace = true
+rand = { workspace = true, features = ["thread_rng"] }
 tokio.workspace = true
 tokio.features = ["full"]
 tokio-util.workspace = true
