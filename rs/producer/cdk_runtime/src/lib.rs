@@ -82,11 +82,14 @@ impl Default for CdkRuntime {
 
 #[cfg(target_arch = "wasm32")]
 fn rng_seed() -> [u8; 32] {
+    // The canister id can be up to 29 bytes, so cap it at 24 to ensure it can never overlap with
+    // the timestamp which occupies the final 8 bytes
     let mut seed = [0; 32];
-    let mut bytes = Vec::new();
-    bytes.extend_from_slice(ic_cdk::api::canister_self().as_slice());
-    bytes.extend_from_slice(&ic_cdk::api::time().to_be_bytes());
-    seed[..bytes.len()].copy_from_slice(&bytes);
+    let canister_id = ic_cdk::api::canister_self();
+    let id_bytes = canister_id.as_slice();
+    let id_len = id_bytes.len().min(24);
+    seed[..id_len].copy_from_slice(&id_bytes[..id_len]);
+    seed[24..].copy_from_slice(&ic_cdk::api::time().to_be_bytes());
     seed
 }
 
